@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "dapper": "^0.0.6"
+  }
+}
