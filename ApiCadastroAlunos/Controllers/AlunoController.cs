@@ -1,4 +1,5 @@
-﻿using ApiCadastroAlunos.Models;
+﻿using System.Collections.Generic;
+using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace ApiCadastroAlunos.Controllers
             if (alunoExists != null)
             {
 
-               return Ok(new ResultViewModel
+               return StatusCode(200, new ResultViewModel
                 {
                     Message = "Alunos encontrados com sucesso!",
                     Success = true,

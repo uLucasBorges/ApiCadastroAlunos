@@ -12,6 +12,10 @@ namespace ApiCadastroAlunos.Models
         [StringLength(50, MinimumLength = 1, ErrorMessage = "Insira um sobrenome.")]
         public string Sobrenome { get; set; }
 
+        public Aluno()
+        {
+        }
+
         public Aluno(int id, string nome, string sobrenome)
         {
             Id = id;
