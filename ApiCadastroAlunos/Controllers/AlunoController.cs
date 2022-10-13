@@ -22,7 +22,7 @@ namespace ApiCadastroAlunos.Controllers
             if (alunoExists != null)
             {
 
-               return StatusCode(200, new ResultViewModel
+                return StatusCode(200, new ResultViewModel
                 {
                     Message = "Alunos encontrados com sucesso!",
                     Success = true,
@@ -45,7 +45,7 @@ namespace ApiCadastroAlunos.Controllers
             var alunoExists = await _aluno.GetById(id);
             if (alunoExists != null)
             {
-               
+
                 return Ok(new ResultViewModel
                 {
                     Message = "Aluno encontrado com sucesso!",
@@ -54,18 +54,18 @@ namespace ApiCadastroAlunos.Controllers
                 });
             }
 
-                return BadRequest(new ResultViewModel
-                {
-                    Message = "Aluno não encontrado!",
-                    Success = false
-                   
-                });
+            return BadRequest(new ResultViewModel
+            {
+                Message = "Aluno não encontrado!",
+                Success = false
+
+            });
         }
 
         [HttpGet("/api/alunos/search/name")]
-        public async Task<IActionResult> GetByName(string nome , string sobrenome)
+        public async Task<IActionResult> GetByName(string nome, string sobrenome)
         {
-            var alunoExists = await _aluno.GetBy(nome , sobrenome);
+            var alunoExists = await _aluno.GetBy(nome, sobrenome);
             if (alunoExists != null)
             {
 
@@ -88,30 +88,26 @@ namespace ApiCadastroAlunos.Controllers
         [HttpPost]
 
         [Route("/api/alunos/create")]
-        public async Task<IActionResult> New([FromBody]AlunoViewModel aluno)
+        public async Task<IActionResult> New([FromBody] AlunoViewModel aluno)
         {
             var alunoCreated = await _aluno.create(aluno);
-            if (alunoCreated != null)
-            return Ok(new ResultViewModel
+            if (alunoCreated.Success)
             {
-                Message = "Aluno criado com sucesso!",
-                Success = true,
-                Data = aluno
-            });
+                return Ok(alunoCreated);
+            }
 
-            return BadRequest(new ResultViewModel
-            {
-                Message = "Aluno já existente.",
-                Success = false
-            });
+
+            return StatusCode(500, alunoCreated);
+
+
 
         }
 
 
         [HttpPut("/api/set/aluno/{id}")]
-        public async Task<IActionResult> Set([FromBody]Aluno aluno)
+        public async Task<IActionResult> Set([FromBody] Aluno aluno)
         {
-             var alunoExists = await _aluno.Update(aluno);
+            var alunoExists = await _aluno.Update(aluno);
 
             if (alunoExists != null)
                 return Ok(new ResultViewModel
@@ -120,7 +116,7 @@ namespace ApiCadastroAlunos.Controllers
                     Success = true,
                     Data = aluno
                 });
-            
+
 
 
             return BadRequest(new ResultViewModel
@@ -135,15 +131,15 @@ namespace ApiCadastroAlunos.Controllers
         {
             {
                 var userExists = await _aluno.Delete(id);
-                if(userExists != null)
-                return Ok(new ResultViewModel
-                {
-                    Message = "Aluno deletado com sucesso!",
-                    Success = true,
-           
-                });
+                if (userExists != null)
+                    return Ok(new ResultViewModel
+                    {
+                        Message = "Aluno deletado com sucesso!",
+                        Success = true,
+
+                    });
             }
-               
+
 
             return BadRequest(new ResultViewModel
             {

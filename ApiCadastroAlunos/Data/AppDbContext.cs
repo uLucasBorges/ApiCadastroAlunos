@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using ApiCadastroAlunos.Models;
+﻿using ApiCadastroAlunos.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.Data
@@ -11,10 +9,8 @@ namespace ApiCadastroAlunos.Data
         {
         }
 
-        public IDbConnection Connection { get; set; }
-
         public DbSet<Aluno> Alunos { get; set; }
-
+        public DbSet<Professor> Professores { get; set; }
 
     }
 }

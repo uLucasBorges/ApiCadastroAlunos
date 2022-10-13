@@ -90,11 +90,11 @@ namespace Api.Testes
 
         [Fact(DisplayName = "Deve retornar 200 na criação de alunos")]
         public async Task Deve_Retornar_200_Criacao_Alunos()
-        {
+         {
             // Arrange
-            var aluno = new AlunoViewModel();
             var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.create(aluno)).ReturnsAsync(new Aluno());
+            var aluno = new AlunoViewModel(It.IsAny<string>() , It.IsAny<string>());
+            mockAlunoRepository.Setup(x => x.create(aluno)).ReturnsAsync(new ResultViewModel() { Data = aluno , Success = true});
 
             // Act
             var result = (ObjectResult)await alunooController.New(aluno);

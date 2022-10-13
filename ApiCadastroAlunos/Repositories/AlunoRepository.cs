@@ -21,21 +21,42 @@ namespace ApiCadastroAlunos.Repositories
             this.bdb = bdb;
         }
 
-        public async Task<Aluno> create(AlunoViewModel aluno)
+        public async Task<ResultViewModel> create(AlunoViewModel aluno)
         {
-
-            var Aluno = new Aluno(0, aluno.Nome , aluno.Sobrenome);
-            var userExists = await this.GetBy(aluno.Nome, aluno.Sobrenome);
-            if (userExists != null)
+            try
             {
-                return null;
+                var Aluno = new Aluno(0, aluno.Nome, aluno.Sobrenome);
+                var userExists = await this.GetBy(aluno.Nome, aluno.Sobrenome);
+                if (userExists != null)
+                {
+                    return new ResultViewModel
+                    {
+                        Message = "Aluno já existente.",
+                        Success = false
+                    };
+                }
+
+
+
+                await _db.Alunos.AddAsync(Aluno);
+                await _db.SaveChangesAsync();
+                
+                return new ResultViewModel
+                {
+                    Message = "Aluno criado com sucesso!",
+                    Success = true,
+                    Data = aluno
+                };
+               
             }
-
-
-
-            await _db.Alunos.AddAsync(Aluno);
-            await _db.SaveChangesAsync();
-            return Aluno;
+            catch (Exception ex)
+            {
+                return new ResultViewModel
+                {
+                    Message = "Problemas ao criar aluno.",
+                    Success = false
+                };
+            }
 
         }
 
