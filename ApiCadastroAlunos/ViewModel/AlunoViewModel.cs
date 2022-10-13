@@ -6,15 +6,13 @@ namespace ApiCadastroAlunos.ViewModel
     {
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
+        public int ProfessorId { get; set; }
 
-        public AlunoViewModel()
-        {
-        }
-
-        public AlunoViewModel(string nome, string sobrenome)
+        public AlunoViewModel(string nome, string sobrenome, int professorId)
         {
             Nome = nome;
             Sobrenome = sobrenome;
+            ProfessorId = professorId;
         }
     }
 

@@ -11,16 +11,14 @@ namespace ApiCadastroAlunos.Models
         public string Nome { get; set; }
         [StringLength(50, MinimumLength = 1, ErrorMessage = "Insira um sobrenome.")]
         public string Sobrenome { get; set; }
+        public int professorId { get; set; }
 
-        public Aluno()
-        {
-        }
-
-        public Aluno(int id, string nome, string sobrenome)
+        public Aluno(int id, string nome, string sobrenome, int professorId)
         {
             Id = id;
             Nome = nome;
             Sobrenome = sobrenome;
+            this.professorId = professorId;
         }
     }
 }

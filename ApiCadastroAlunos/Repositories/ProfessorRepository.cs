@@ -2,6 +2,7 @@
 using ApiCadastroAlunos.Exceptions;
 using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
+using ApiCadastroAlunos.ViewModel;
 using Dapper;
 
 namespace ApiCadastroAlunos.Repositories
@@ -15,22 +16,19 @@ namespace ApiCadastroAlunos.Repositories
             this.bdb = bdb;
         }
 
-        public async Task<string> GetById(int id)
+
+        public async Task<Professor> GetDadosProf(int id)
         {
             try
             {
                 using (var conn = bdb.Connection)
                 {
+                    string query = @"SELECT COUNT(a.Id) as qntdAlunos, p.nome as NomeProfessor, p.id as Id, p.materia as Materia
+                                    FROM Alunos a , Professores p
+                                    WHERE a.professorid = 1 
+                                    GROUP BY a.id , p.nome , p.id , p.materia";
 
-                    //string query = "SELECT * FROM Alunos WHERE id = @id";
-                    //var aluno = (await conn.QueryFirstOrDefaultAsync<Professor>(sql: query, new { Id = id }));
-                    //if (aluno != null)
-                    // return aluno;
-
-                    //return null;
-
-                    string query = "select p.nome from professores p inner join alunos a on p.id = a.professorid and a.id = @id";
-                    var professor = await conn.QueryAsync<string>(sql: query, new { Id = id });
+                    var professor = await conn.QueryAsync<Professor>(sql: query, new { Id = id });
 
                     return professor.FirstOrDefault();
 
@@ -42,33 +40,14 @@ namespace ApiCadastroAlunos.Repositories
             }
         }
 
-        public async Task<List<Aluno>> GetAlunoByProf(int id)
-        {
-            try
-            {
-                using (var conn = bdb.Connection)
-                {
-                    string query = "select a.id , a.nome , a.sobrenome from alunos a inner join professores p on a.professorId = p.id where p.id = @id";
-                    var professor = await conn.QueryAsync<Aluno>(sql: query, new { Id = id });
-
-                    return professor.ToList();
-
-                }
-            }
-            catch (SystemException ex)
-            {
-                throw new Exception("Erro interno");
-            }
-        }
-
-        public async Task<List<Professor>> Get()
+        public async Task<List<ProfessorViewModel>> Get()
         {
             try
             {
                 using (var conn = bdb.Connection)
                 {
                     string query = "SELECT * FROM Professores";
-                    List<Professor> alunos = (await conn.QueryAsync<Professor>(sql: query)).ToList();
+                    List<ProfessorViewModel> alunos = (await conn.QueryAsync<ProfessorViewModel>(sql: query)).ToList();
                     if (alunos != null)
                         return alunos;
 
@@ -82,14 +61,25 @@ namespace ApiCadastroAlunos.Repositories
             }
         }
 
-        public int GetContagem(int professorid)
+        public async Task<List<Aluno>> GetAlunosPorProfessor(int id)
         {
-            return 100;
-        }
+            try
+            {
+                using (var conn = bdb.Connection)
+                {
+                    string query = "SELECT * FROM Alunos WHERE professorid = @id ";
+                    List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query, new { Id = id })).ToList();
+                    if (alunos != null)
+                        return alunos;
 
-        public int GetContagem()
-        {
-            throw new NotImplementedException();
+                    return null;
+                }
+
+            }
+            catch (SystemException ex)
+            {
+                throw new DomainException("Erro interno");
+            }
         }
     }
 }

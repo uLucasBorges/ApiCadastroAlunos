@@ -25,7 +25,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                var Aluno = new Aluno(0, aluno.Nome, aluno.Sobrenome);
+                var Aluno = new Aluno(0, aluno.Nome, aluno.Sobrenome , aluno.ProfessorId);
                 var userExists = await this.GetBy(aluno.Nome, aluno.Sobrenome);
                 if (userExists != null)
                 {
