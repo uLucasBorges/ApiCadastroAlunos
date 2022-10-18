@@ -36,7 +36,7 @@ namespace Api.Testes
             // Arrange
 
             var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.Get()).ReturnsAsync(new List<Aluno>());
+            mockAlunoRepository.Setup(x => x.Get()).ReturnsAsync(new ResultViewModel() {Success = true });
 
             // Act
             var result = (ObjectResult) await alunooController.GetAll();
@@ -54,7 +54,7 @@ namespace Api.Testes
             // Arrange
             var id = 100;
             var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync(new Aluno());
+            mockAlunoRepository.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync(new ResultViewModel() { Success = true });
 
             // Act
             var result = (ObjectResult)await alunooController.Get(id);
@@ -75,7 +75,7 @@ namespace Api.Testes
             var nome = "";  
             var sobrenome = "";
             var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.GetBy(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new Aluno());
+            mockAlunoRepository.Setup(x => x.GetBy(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new ResultViewModel() { Success = true });
 
             // Act
             var result = (ObjectResult)await alunooController.GetByName(nome , sobrenome);
@@ -93,7 +93,7 @@ namespace Api.Testes
          {
             // Arrange
             var alunooController = this.CriarAlunoController();
-            var aluno = new AlunoViewModel(It.IsAny<string>() , It.IsAny<string>());
+            var aluno = new AlunoViewModel(It.IsAny<string>() , It.IsAny<string>() , It.IsAny<int>());
             mockAlunoRepository.Setup(x => x.create(aluno)).ReturnsAsync(new ResultViewModel() { Data = aluno , Success = true});
 
             // Act
@@ -112,7 +112,7 @@ namespace Api.Testes
             // Arrange
             var alunoId = 100;
             var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.Delete(alunoId)).ReturnsAsync(new Aluno());
+            mockAlunoRepository.Setup(x => x.Delete(alunoId)).ReturnsAsync(new ResultViewModel() {Success = true });
 
             // Act
             var result = (ObjectResult)await alunooController.Delete(alunoId);
@@ -130,7 +130,7 @@ namespace Api.Testes
             // Arrange
             var aluno = new Aluno();
             var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.Update(aluno)).ReturnsAsync(new Aluno());
+            mockAlunoRepository.Setup(x => x.Update(aluno)).ReturnsAsync(new ResultViewModel() { Data = aluno, Success = true });
 
             // Act
             var result = (ObjectResult)await alunooController.Set(aluno);

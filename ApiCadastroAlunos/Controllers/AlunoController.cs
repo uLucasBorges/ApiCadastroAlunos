@@ -19,23 +19,13 @@ namespace ApiCadastroAlunos.Controllers
         public async Task<IActionResult> GetAll()
         {
             var alunoExists = await _aluno.Get();
-            if (alunoExists != null)
-            {
 
-                return StatusCode(200, new ResultViewModel
-                {
-                    Message = "Alunos encontrados com sucesso!",
-                    Success = true,
-                    Data = alunoExists
-                });
+            if (alunoExists.Success)
+            {
+                return Ok(alunoExists);
             }
 
-            return BadRequest(new ResultViewModel
-            {
-                Message = "Alunos não encontrados!",
-                Success = false
-
-            });
+            return StatusCode(500, alunoExists);
 
         }
 
@@ -43,46 +33,26 @@ namespace ApiCadastroAlunos.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var alunoExists = await _aluno.GetById(id);
-            if (alunoExists != null)
-            {
 
-                return Ok(new ResultViewModel
-                {
-                    Message = "Aluno encontrado com sucesso!",
-                    Success = true,
-                    Data = alunoExists
-                });
+            if (alunoExists.Success)
+            {
+                return Ok(alunoExists);
             }
 
-            return BadRequest(new ResultViewModel
-            {
-                Message = "Aluno não encontrado!",
-                Success = false
-
-            });
+            return StatusCode(404, alunoExists);
         }
 
         [HttpGet("/api/alunos/search/name")]
         public async Task<IActionResult> GetByName(string nome, string sobrenome)
         {
             var alunoExists = await _aluno.GetBy(nome, sobrenome);
-            if (alunoExists != null)
-            {
 
-                return Ok(new ResultViewModel
-                {
-                    Message = "Aluno encontrado com sucesso!",
-                    Success = true,
-                    Data = alunoExists
-                });
+            if (alunoExists.Success)
+            {
+                return Ok(alunoExists);
             }
 
-            return BadRequest(new ResultViewModel
-            {
-                Message = "Aluno não encontrado!",
-                Success = false
-
-            });
+            return StatusCode(500, alunoExists);
         }
 
         [HttpPost]
@@ -99,8 +69,6 @@ namespace ApiCadastroAlunos.Controllers
 
             return StatusCode(500, alunoCreated);
 
-
-
         }
 
 
@@ -109,47 +77,29 @@ namespace ApiCadastroAlunos.Controllers
         {
             var alunoExists = await _aluno.Update(aluno);
 
-            if (alunoExists != null)
-                return Ok(new ResultViewModel
-                {
-                    Message = "Aluno Atualizado com sucesso!",
-                    Success = true,
-                    Data = aluno
-                });
-
-
-
-            return BadRequest(new ResultViewModel
+            if (alunoExists.Success)
             {
-                Message = "Aluno não existente.",
-                Success = false
-            });
+                return Ok(alunoExists);
+            }
+
+            return StatusCode(500, alunoExists);
+          
         }
 
         [HttpDelete("api/delete/aluno/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            
+            var userExists = await _aluno.Delete(id);
+          
+            if (userExists.Success)
             {
-                var userExists = await _aluno.Delete(id);
-                if (userExists != null)
-                    return Ok(new ResultViewModel
-                    {
-                        Message = "Aluno deletado com sucesso!",
-                        Success = true,
-
-                    });
+                return Ok(userExists);
             }
 
-
-            return BadRequest(new ResultViewModel
-            {
-                Message = "Aluno não existente.",
-                Success = false
-            });
+            return StatusCode(404, userExists);
 
         }
-
-
 
     }
 }

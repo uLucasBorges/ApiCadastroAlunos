@@ -13,6 +13,10 @@ namespace ApiCadastroAlunos.Models
         public string Sobrenome { get; set; }
         public int professorId { get; set; }
 
+        public Aluno()
+        {
+        }
+
         public Aluno(int id, string nome, string sobrenome, int professorId)
         {
             Id = id;

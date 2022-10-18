@@ -5,10 +5,10 @@ namespace ApiCadastroAlunos.Repositories.Interfaces
 {
     public interface IProfessorRepository
     {
-        Task<List<ProfessorViewModel>> Get();
-        Task<List<Aluno>> GetAlunosPorProfessor(int id);
-        Task<Professor> GetDadosProf(int id);
-  
+        Task<ResultViewModel> Get();
+        Task<ResultViewModel> GetAlunosPorProfessor(int id);
+        Task<ResultViewModel> GetById(int id);
+
 
     }
 }

@@ -25,7 +25,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                var Aluno = new Aluno(0, aluno.Nome, aluno.Sobrenome , aluno.ProfessorId);
+                var Aluno = new Aluno(0, aluno.Nome, aluno.Sobrenome , 1);
                 var userExists = await this.GetBy(aluno.Nome, aluno.Sobrenome);
                 if (userExists != null)
                 {
@@ -60,48 +60,91 @@ namespace ApiCadastroAlunos.Repositories
 
         }
 
-        public async Task<Aluno> Delete(int id)
+        public async Task<ResultViewModel> Delete(int id)
         {
-
-            var userExists = await this.GetById(id);
-            if (userExists != null)
+            try
             {
-                _db.Alunos.Remove(userExists);
-                _db.SaveChanges();
+                var userExists = await this.GetById(id);
+                if (userExists.Data != null)
+                {
+                    _db.Alunos.Remove(userExists.Data);
+                    _db.SaveChanges();
+
+                    return new ResultViewModel()
+                    {
+                        Message = "Aluno deletado com sucesso!",
+                        Success = true,
+                        Data = userExists.Data
+
+                    };
+                }
+                else
+                {
+                    return new ResultViewModel()
+                    {
+                        Message = "Aluno não existente.",
+                        Success = false,
+                        Data = userExists.Data
+                    };
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new ResultViewModel
+                {
+                    Message = "Problemas ao deletar aluno.",
+                    Success = false
+                };
             }
 
-
-
-            return userExists;
         }
 
-        public async Task<List<Aluno>> Get()
+        public async Task<ResultViewModel> Get()
         {
             try
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = "SELECT * FROM Alunos";
+                    string query = @"SELECT a.id , a.nome  , a.sobrenome, p.id as professorId ,p.nome as professor 
+                                     FROM
+                                     professores p
+                                     INNER JOIN alunos a
+                                     ON a.professorid = p.id
+                                     GROUP BY
+                                     a.id , a.nome,a.sobrenome , p.id ,p.nome";
+
                     List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query)).ToList();
                     if (alunos.Count == 0)
-                        return null;
+                    {
+                        return new ResultViewModel
+                        {
+                            Message = "não existem alunos.",
+                            Success = false
+                        };
+                    }
 
-                    return alunos;
+                    return new ResultViewModel
+                    {
+                        Data = alunos,
+                        Message = "Alunos encontrados.",
+                        Success = true
+                    };
 
                 }
 
             }
             catch (SystemException ex)
             {
-                throw new DomainException("Erro interno");
+                return new ResultViewModel
+                {
+                    Message = "Problemas ao capturar aluno.",
+                    Success = false
+                };
             }
         }
 
-        public async Task<Aluno> GetBy(string Nome, string Sobrenome)
+        public async Task<ResultViewModel> GetBy(string Nome, string Sobrenome)
         {
 
             try
@@ -111,19 +154,36 @@ namespace ApiCadastroAlunos.Repositories
                     string query = "SELECT * FROM Alunos WHERE Nome = @Nome and sobrenome = @Sobrenome";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Nome = Nome, Sobrenome = Sobrenome }));
                     if (aluno != null)
-                        
-                    return aluno;
+                     {
+
+                        return new ResultViewModel
+                        {
+                            Data = aluno,
+                            Message = "Aluno encontrado.",
+                            Success = true
+                        };
+                    }
+
+                    return new ResultViewModel
+                    {
+                        Message = "aluno inexistente.",
+                        Success = false
+                    };
 
                 }
                 return null;
             }
             catch (SystemException ex)
             {
-                throw new Exception("Erro interno");
+                return new ResultViewModel
+                {
+                    Message = "Problemas ao capturar aluno.",
+                    Success = false
+                };
             }
         }
 
-        public async Task<Aluno> GetById(int id)
+        public async Task<ResultViewModel> GetById(int id)
         {
 
             try
@@ -134,35 +194,68 @@ namespace ApiCadastroAlunos.Repositories
                     string query = "SELECT * FROM Alunos WHERE id = @id";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Id = id }));
                     if (aluno != null)
-                        return aluno;
+                    {
 
-                        return null;
+                        return new ResultViewModel
+                        {
+                            Data = aluno,
+                            Message = "Aluno encontrado.",
+                            Success = true
+                        };
+                    }
+
+                    return new ResultViewModel
+                    {
+                        Message = "aluno inexistente.",
+                        Success = false
+                    };
                 }
             }
             catch (SystemException ex)
             {
-                throw new Exception("Erro interno");
+                return new ResultViewModel
+                {
+                    Message = "Problemas ao capturar aluno.",
+                    Success = false
+                };
             }
          
         }
 
-        public async Task<Aluno> Update(Aluno aluno)
+        public async Task<ResultViewModel> Update(Aluno aluno)
         {
             try
             {
                 var userExists = await this.GetById(aluno.Id);
 
                 if (userExists != null)
+                {
+
                     _db.Alunos.Update(aluno);
-                    _db.SaveChanges();
-                    return aluno;
-                
-                    return null;
+                    await _db.SaveChangesAsync();
+
+                    return new ResultViewModel()
+                    {
+                        Message = "aluno atualizado com sucesso.",
+                        Data = aluno,
+                        Success = true
+                    };
+                }
+
+                return new ResultViewModel()
+                {
+                    Message = "aluno não existente",
+                    Success = false
+                };
                
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro Interno");
+                return new ResultViewModel
+                {
+                    Message = "Problemas ao atualizar aluno.",
+                    Success = false
+                };
             }
 
         }

@@ -18,71 +18,36 @@ namespace ApiCadastroAlunos.Controllers
         public async Task<IActionResult> GetAll()
         {
             var alunoExists = await _professor.Get();
-            if (alunoExists != null)
-            {
 
-                return StatusCode(200, new ResultViewModel
-                {
-                    Message = "Professores encontrados com sucesso!",
-                    Success = true,
-                    Data = alunoExists
-                });
-            }
+            if (alunoExists.Success)
+                return StatusCode(200, alunoExists);
 
-            return BadRequest(new ResultViewModel
-            {
-                Message = "Professores não encontrados!",
-                Success = false
-
-            });
-
+            return StatusCode(404, alunoExists); 
+      
         }
 
         [HttpGet("/api/alunos/by/professor/{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var alunoExists = await _professor.GetAlunosPorProfessor(id);
-            if (alunoExists.Count > 0)
-            {
+            if (alunoExists.Success)
+            return StatusCode(200, alunoExists);
 
-                return Ok(new ResultViewModel
-                {
-                    Message = "professor encontrado com sucesso!",
-                    Success = true,
-                    Data = alunoExists
-                });
-            }
-
-            return BadRequest(new ResultViewModel
-            {
-                Message = "professor não encontrado!",
-                Success = false
-
-            });
+            return StatusCode(404, alunoExists);
         }
 
 
-        [HttpGet("/api/professor/detalhes/{id}")]
-        public async Task<IActionResult> GetDetalhesProfessor(int id)
+
+        [HttpGet("/api/professor/{id}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            var alunoExists = await _professor.GetDadosProf(id);
-            if (alunoExists != null)
-            {
+            var alunoExists = await _professor.GetById(id);
+            if (alunoExists.Success)
+            return StatusCode(200, alunoExists);
 
-                return Ok(new ResultViewModel
-                {
-                    Message = "professor encontrado com sucesso!",
-                    Success = true,
-                    Data = alunoExists
-                });
-            }
+            return StatusCode(404, alunoExists);
 
-            return BadRequest(new ResultViewModel
-            {
-                Message = "professor não encontrado!",
-                Success = false
+        } }
 
-            });
-        }
-    }
 }
+
