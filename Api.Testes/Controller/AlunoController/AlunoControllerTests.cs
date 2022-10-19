@@ -93,7 +93,7 @@ namespace Api.Testes
          {
             // Arrange
             var alunooController = this.CriarAlunoController();
-            var aluno = new AlunoViewModel(It.IsAny<string>() , It.IsAny<string>() , It.IsAny<int>());
+            var aluno = new AlunoViewModel(It.IsAny<string>() , It.IsAny<string>() , It.IsAny<int>() , It.IsAny<string>() , It.IsAny<string>());
             mockAlunoRepository.Setup(x => x.create(aluno)).ReturnsAsync(new ResultViewModel() { Data = aluno , Success = true});
 
             // Act

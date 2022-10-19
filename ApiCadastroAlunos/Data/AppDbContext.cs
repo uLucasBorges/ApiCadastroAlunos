@@ -1,4 +1,5 @@
 ﻿using ApiCadastroAlunos.Models;
+using ApiCadastroAlunos.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.Data

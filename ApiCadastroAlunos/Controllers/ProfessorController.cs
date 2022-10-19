@@ -47,7 +47,20 @@ namespace ApiCadastroAlunos.Controllers
 
             return StatusCode(404, alunoExists);
 
-        } }
+        }
+
+        [HttpPost("/api/professor/create")]
+        public async Task<IActionResult> create([FromBody]Professor professor)
+        {
+            var created = await _professor.Create(professor);
+            if (created.Success)
+            return StatusCode(200, created);
+
+            return StatusCode(404, created);
+
+        }
+
+    }
 
 }
 

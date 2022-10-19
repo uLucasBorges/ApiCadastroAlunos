@@ -25,18 +25,8 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                var Aluno = new Aluno(0, aluno.Nome, aluno.Sobrenome , 1);
-                var userExists = await this.GetBy(aluno.Nome, aluno.Sobrenome);
-                if (userExists != null)
-                {
-                    return new ResultViewModel
-                    {
-                        Message = "Aluno já existente.",
-                        Success = false
-                    };
-                }
-
-
+                var Aluno = new Aluno(0,aluno.Nome, aluno.Sobrenome , aluno.email, aluno.telefone, aluno.ProfessorId);
+                if (aluno != null)
 
                 await _db.Alunos.AddAsync(Aluno);
                 await _db.SaveChangesAsync();
@@ -47,7 +37,14 @@ namespace ApiCadastroAlunos.Repositories
                     Success = true,
                     Data = aluno
                 };
-               
+
+                return new ResultViewModel
+                {
+                    Message = "Aluno não criado!",
+                    Success = false
+                    
+                };
+
             }
             catch (Exception ex)
             {
@@ -106,13 +103,13 @@ namespace ApiCadastroAlunos.Repositories
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = @"SELECT a.id , a.nome  , a.sobrenome, p.id as professorId ,p.nome as professor 
+                    string query = @"SELECT a.id , a.nome  , a.sobrenome, a.email , a.celular , p.id as professorId ,p.nome as nomeProfessor 
                                      FROM
                                      professores p
                                      INNER JOIN alunos a
                                      ON a.professorid = p.id
                                      GROUP BY
-                                     a.id , a.nome,a.sobrenome , p.id ,p.nome";
+                                     a.id , a.nome,a.sobrenome ,a.email , a.celular, p.id ,p.nome";
 
                     List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query)).ToList();
                     if (alunos.Count == 0)
@@ -191,7 +188,13 @@ namespace ApiCadastroAlunos.Repositories
                 using (var conn = bdb.Connection)
                 {
 
-                    string query = "SELECT * FROM Alunos WHERE id = @id";
+                    string query = @"SELECT a.id , a.nome  , a.sobrenome, a.email , a.celular , p.id as professorId ,p.nome as nomeProfessor 
+                                     FROM
+                                     professores p
+                                     INNER JOIN alunos a
+                                     ON a.professorid = p.id and a.id = @id
+                                     GROUP BY
+                                     a.id , a.nome,a.sobrenome ,a.email , a.celular, p.id ,p.nome ";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Id = id }));
                     if (aluno != null)
                     {
