@@ -1,9 +1,11 @@
 ﻿using ApiCadastroAlunos.Data;
 using ApiCadastroAlunos.Exceptions;
+using ApiCadastroAlunos.ExtensionsMethods;
 using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.Repositories
 {
@@ -25,25 +27,19 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                var Aluno = new Aluno(0,aluno.Nome, aluno.Sobrenome , aluno.email, aluno.telefone, aluno.ProfessorId);
+                var Aluno = new Aluno(0,
+                        aluno.Nome,
+                        aluno.Sobrenome,
+                        aluno.email,
+                        aluno.telefone,
+                        aluno.ProfessorId);
+
                 if (aluno != null)
 
                 await _db.Alunos.AddAsync(Aluno);
                 await _db.SaveChangesAsync();
-                
-                return new ResultViewModel
-                {
-                    Message = "Aluno criado com sucesso!",
-                    Success = true,
-                    Data = aluno
-                };
 
-                return new ResultViewModel
-                {
-                    Message = "Aluno não criado!",
-                    Success = false
-                    
-                };
+                return AlunoValidate.Create(aluno);
 
             }
             catch (Exception ex)
@@ -65,25 +61,10 @@ namespace ApiCadastroAlunos.Repositories
                 if (userExists.Data != null)
                 {
                     _db.Alunos.Remove(userExists.Data);
-                    _db.SaveChanges();
-
-                    return new ResultViewModel()
-                    {
-                        Message = "Aluno deletado com sucesso!",
-                        Success = true,
-                        Data = userExists.Data
-
-                    };
+                    _db.SaveChanges();         
                 }
-                else
-                {
-                    return new ResultViewModel()
-                    {
-                        Message = "Aluno não existente.",
-                        Success = false,
-                        Data = userExists.Data
-                    };
-                }
+
+                return AlunoValidate.Delete(userExists);
 
             }
             catch (Exception ex)
@@ -111,22 +92,9 @@ namespace ApiCadastroAlunos.Repositories
                                      GROUP BY
                                      a.id , a.nome,a.sobrenome ,a.email , a.celular, p.id ,p.nome";
 
-                    List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query)).ToList();
-                    if (alunos.Count == 0)
-                    {
-                        return new ResultViewModel
-                        {
-                            Message = "não existem alunos.",
-                            Success = false
-                        };
-                    }
+                   List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query)).ToList();
 
-                    return new ResultViewModel
-                    {
-                        Data = alunos,
-                        Message = "Alunos encontrados.",
-                        Success = true
-                    };
+                   return AlunoValidate.List(alunos);
 
                 }
 
@@ -149,26 +117,12 @@ namespace ApiCadastroAlunos.Repositories
                 using (var conn = bdb.Connection)
                 {
                     string query = "SELECT * FROM Alunos WHERE Nome = @Nome and sobrenome = @Sobrenome";
+                    
                     var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Nome = Nome, Sobrenome = Sobrenome }));
-                    if (aluno != null)
-                     {
 
-                        return new ResultViewModel
-                        {
-                            Data = aluno,
-                            Message = "Aluno encontrado.",
-                            Success = true
-                        };
-                    }
-
-                    return new ResultViewModel
-                    {
-                        Message = "aluno inexistente.",
-                        Success = false
-                    };
+                   return AlunoValidate.Select(aluno);
 
                 }
-                return null;
             }
             catch (SystemException ex)
             {
@@ -196,22 +150,8 @@ namespace ApiCadastroAlunos.Repositories
                                      GROUP BY
                                      a.id , a.nome,a.sobrenome ,a.email , a.celular, p.id ,p.nome ";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Id = id }));
-                    if (aluno != null)
-                    {
-
-                        return new ResultViewModel
-                        {
-                            Data = aluno,
-                            Message = "Aluno encontrado.",
-                            Success = true
-                        };
-                    }
-
-                    return new ResultViewModel
-                    {
-                        Message = "aluno inexistente.",
-                        Success = false
-                    };
+                    
+                    return AlunoValidate.Select(aluno);
                 }
             }
             catch (SystemException ex)
@@ -233,24 +173,11 @@ namespace ApiCadastroAlunos.Repositories
 
                 if (userExists != null)
                 {
-
-                    _db.Alunos.Update(aluno);
+                    _db.Entry(aluno).State = EntityState.Modified;
                     await _db.SaveChangesAsync();
-
-                    return new ResultViewModel()
-                    {
-                        Message = "aluno atualizado com sucesso.",
-                        Data = aluno,
-                        Success = true
-                    };
                 }
 
-                return new ResultViewModel()
-                {
-                    Message = "aluno não existente",
-                    Success = false
-                };
-               
+                 return AlunoValidate.Update(aluno);
             }
             catch (Exception ex)
             {
@@ -260,6 +187,8 @@ namespace ApiCadastroAlunos.Repositories
                     Success = false
                 };
             }
+
+
 
         }
     }

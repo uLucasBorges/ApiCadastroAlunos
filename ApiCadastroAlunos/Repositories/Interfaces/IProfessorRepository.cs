@@ -9,6 +9,7 @@ namespace ApiCadastroAlunos.Repositories.Interfaces
         Task<ResultViewModel> GetAlunosPorProfessor(int id);
         Task<ResultViewModel> GetById(int id);
         Task<ResultViewModel> Create(Professor professor);
+        Task<ResultViewModel> Testando();
 
 
     }

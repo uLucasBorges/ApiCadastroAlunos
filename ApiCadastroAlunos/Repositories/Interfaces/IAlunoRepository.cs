@@ -11,6 +11,5 @@ namespace ApiCadastroAlunos.Repositories.Interfaces
         public Task<ResultViewModel> GetById(int id);
         public Task<ResultViewModel> Update(Aluno alunoId);
         public Task<ResultViewModel> Delete(int id);
-
     }
 }

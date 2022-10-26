@@ -25,9 +25,11 @@ namespace ApiCadastroAlunos.Controllers
                 return Ok(alunoExists);
             }
 
-            return StatusCode(500, alunoExists);
+            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
 
         }
+
+
 
         [HttpGet("/api/alunos/search/{id}")]
         public async Task<IActionResult> Get(int id)
@@ -36,10 +38,10 @@ namespace ApiCadastroAlunos.Controllers
 
             if (alunoExists.Success)
             {
-                return Ok(alunoExists);
+                return Created("Alunos encontrado com Sucesso !!", alunoExists);
             }
 
-            return StatusCode(404, alunoExists);
+            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
         [HttpGet("/api/alunos/search/name")]
@@ -52,7 +54,8 @@ namespace ApiCadastroAlunos.Controllers
                 return Ok(alunoExists);
             }
 
-            return StatusCode(500, alunoExists);
+            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+
         }
 
         [HttpPost]
@@ -60,6 +63,13 @@ namespace ApiCadastroAlunos.Controllers
         [Route("/api/alunos/create")]
         public async Task<IActionResult> New([FromBody] AlunoViewModel aluno)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    var erros = ModelState.SelectMany(x => x.Value.Errors);
+            //    return BadRequest(erros);
+            //}
+
+
             var alunoCreated = await _aluno.create(aluno);
             if (alunoCreated.Success)
             {
@@ -67,7 +77,7 @@ namespace ApiCadastroAlunos.Controllers
             }
 
 
-            return StatusCode(500, alunoCreated);
+            return StatusCode(StatusCodes.Status404NotFound, alunoCreated);
 
         }
 
@@ -75,6 +85,13 @@ namespace ApiCadastroAlunos.Controllers
         [HttpPut("/api/set/aluno/{id}")]
         public async Task<IActionResult> Set([FromBody] Aluno aluno)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    var erros = ModelState.SelectMany(x => x.Value.Errors);
+            //    return BadRequest(erros);
+            //}
+
+
             var alunoExists = await _aluno.Update(aluno);
 
             if (alunoExists.Success)
@@ -82,7 +99,7 @@ namespace ApiCadastroAlunos.Controllers
                 return Ok(alunoExists);
             }
 
-            return StatusCode(500, alunoExists);
+            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
           
         }
 

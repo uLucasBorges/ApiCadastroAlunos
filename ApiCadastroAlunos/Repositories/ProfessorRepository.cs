@@ -1,9 +1,11 @@
 ﻿using ApiCadastroAlunos.Data;
 using ApiCadastroAlunos.Exceptions;
+using ApiCadastroAlunos.ExtensionsMethods;
 using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.Repositories
 {
@@ -16,6 +18,26 @@ namespace ApiCadastroAlunos.Repositories
         {
             this.bdb = bdb;
             _db = db;
+        }
+        public async Task<ResultViewModel> Testando()
+        {
+            var result = await _db.Professores.Include(x => x.Alunos).ToListAsync();
+        
+
+            if (result != null)
+                return new ResultViewModel
+                {
+                    Data = result,
+                    Message = "Professores encontrados com sucesso.",
+                    Success = true
+                };
+
+
+            return new ResultViewModel
+            {
+                Message = "não existem Professores.",
+                Success = false
+            };
         }
 
         public async Task<ResultViewModel> Get()
@@ -30,20 +52,8 @@ namespace ApiCadastroAlunos.Repositories
                                      professores p";
 
                     List<ProfessorViewModel> professores = (await conn.QueryAsync<ProfessorViewModel>(sql: query)).ToList();
-                    if (professores != null)
-                        return new ResultViewModel
-                        {
-                            Data = professores,
-                            Message = "Professores encontrados com sucesso.",
-                            Success = true
-                        };
 
-
-                    return new ResultViewModel
-                    {
-                        Message = "não existem Professores.",
-                        Success = false
-                    };
+                    return ProfessorValidate.List(professores);
                 }
 
             }
@@ -64,28 +74,16 @@ namespace ApiCadastroAlunos.Repositories
                 {
 
                     string query = @"SELECT p.id AS Id, p.nome AS nome , p.sobrenome , p.cep , p.logradouro , p.cidade, p.celular , p.cpf , p.materia AS Materia,
-                                     COUNT(a.Id) alunos
+                                     (SELECT COUNT(1) FROM alunos a  WHERE a.professorid = p.id) alunos
                                      FROM
                                      professores p, alunos a
-                                     WHERE p.id = a.professorid and p.id = @id
+                                     WHERE p.id = @id
                                      GROUP BY
                                      p.id, p.nome, p.sobrenome , p.cep , p.logradouro , p.cidade, p.celular , p.cpf , p.materia";
 
                     ProfessorViewModel professor = (await conn.QueryAsync<ProfessorViewModel>(sql: query , new {Id = id})).FirstOrDefault();
-                    if (professor != null)
-                        return new ResultViewModel
-                        {
-                            Data = professor,
-                            Message = "Professor encontrado com sucesso.",
-                            Success = true
-                        };
-
-
-                    return new ResultViewModel
-                    {
-                        Message = "não existe Professor com o código unico informado informado.",
-                        Success = false
-                    };
+                    
+                    return ProfessorValidate.Select(professor);
                 }
 
             }
@@ -104,28 +102,16 @@ namespace ApiCadastroAlunos.Repositories
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = @"SELECT a.id , a.nome  , a.sobrenome, a.email, a.celular ,p.id as professorId ,p.nome as professor 
+                    string query = @"SELECT a.id , a.nome  , a.sobrenome, a.email, a.celular ,p.id as professorId
                                      FROM
                                      professores p
                                      INNER JOIN alunos a
                                      ON a.professorid = p.id and p.id = @id
                                      GROUP BY 
-                                     a.id , a.nome,a.sobrenome ,a.email, a.celular , p.id ,p.nome";
+                                     a.id , a.nome,a.sobrenome ,a.email, a.celular , p.id";
                     List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query, new { Id = id })).ToList();
-                    if (alunos != null)
-                        return new ResultViewModel
-                        {
-                            Data = alunos,
-                            Message = "",
-                            Success = true
-                        };
 
-
-                    return new ResultViewModel
-                    {
-                        Message = "não existem alunos do Professor informado.",
-                        Success = false
-                    };
+                    return ProfessorValidate.ListAlunos(alunos);
                 }
 
             }
@@ -148,19 +134,7 @@ namespace ApiCadastroAlunos.Repositories
                 await _db.Professores.AddAsync(professor);
                 await _db.SaveChangesAsync();
 
-                return new ResultViewModel
-                {
-                    Message = "Professor criado com sucesso!",
-                    Success = true,
-                    Data = professor
-                };
-
-                return new ResultViewModel
-                {
-                    Message = "Professor não criado!",
-                    Success = false
-
-                };
+                return ProfessorValidate.Create(professor);
 
             }
             catch (Exception ex)
