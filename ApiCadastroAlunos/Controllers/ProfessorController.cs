@@ -39,6 +39,10 @@ namespace ApiCadastroAlunos.Controllers
             if (alunoExists.Success)
             return StatusCode(200, alunoExists);
 
+            if (alunoExists.Message == "Erro ao capturar alunos por Professor.")
+                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+
+
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
@@ -51,6 +55,10 @@ namespace ApiCadastroAlunos.Controllers
             var alunoExists = await _professor.GetById(id);
             if (alunoExists.Success)
             return StatusCode(200, alunoExists);
+
+            if (alunoExists.Message == "Erro ao capturar Professor.")
+            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+
 
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
 
@@ -67,20 +75,25 @@ namespace ApiCadastroAlunos.Controllers
 
         }
 
+
         [HttpPost("/api/professor/create")]
         public async Task<IActionResult> create([FromBody]Professor professor)
         {
-            if (!ModelState.IsValid)
-            {
-                var erros = ModelState.SelectMany(x => x.Value.Errors);
-                return BadRequest(erros);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    var erros = ModelState.SelectMany(x => x.Value.Errors);
+            //    return BadRequest(erros);
+            //}
 
 
             var created = await _professor.Create(professor);
 
             if (created.Success)
             return StatusCode(StatusCodes.Status201Created, created);
+
+            if (created.Message == "Problemas ao criar professor.")
+            return StatusCode(StatusCodes.Status500InternalServerError, created);
+
 
             return StatusCode(StatusCodes.Status409Conflict, created);
 

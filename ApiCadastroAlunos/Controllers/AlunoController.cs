@@ -25,7 +25,10 @@ namespace ApiCadastroAlunos.Controllers
                     return Ok(alunoExists);
                 }
 
-                return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+            if (alunoExists.Message == "Problemas ao capturar aluno.")
+            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+
+            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
 
@@ -40,6 +43,9 @@ namespace ApiCadastroAlunos.Controllers
                 return Created("Alunos encontrado com Sucesso !!", alunoExists);
             }
 
+            if (alunoExists.Message == "Problemas ao capturar aluno.")
+            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
@@ -52,6 +58,9 @@ namespace ApiCadastroAlunos.Controllers
             {
                 return Ok(alunoExists);
             }
+
+            if (alunoExists.Message == "Problemas ao capturar aluno.")
+           return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
 
@@ -75,6 +84,8 @@ namespace ApiCadastroAlunos.Controllers
                 return Ok(alunoCreated);
             }
 
+            if (alunoCreated.Message == "Problemas ao criar aluno.")
+            return StatusCode(StatusCodes.Status500InternalServerError, alunoCreated);
 
             return StatusCode(StatusCodes.Status404NotFound, alunoCreated);
 
@@ -94,9 +105,11 @@ namespace ApiCadastroAlunos.Controllers
             var alunoExists = await _aluno.Update(aluno);
 
             if (alunoExists.Success)
-            {
-                return Ok(alunoExists);
-            }
+            return Ok(alunoExists);
+            
+
+            if (alunoExists.Message == "Problemas ao atualizar aluno.")
+            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
           
@@ -109,9 +122,11 @@ namespace ApiCadastroAlunos.Controllers
             var userExists = await _aluno.Delete(id);
           
             if (userExists.Success)
-            {
-                return Ok(userExists);
-            }
+            return Ok(userExists);
+
+            if (userExists.Message == "Problemas ao deletar aluno.")
+            return StatusCode(StatusCodes.Status500InternalServerError, userExists);
+
 
             return StatusCode(404, userExists);
 
