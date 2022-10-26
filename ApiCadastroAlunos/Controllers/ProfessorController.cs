@@ -23,6 +23,9 @@ namespace ApiCadastroAlunos.Controllers
                 if (alunoExists.Success)
                 return StatusCode(200, alunoExists);
 
+                if(alunoExists.Message == "Erro ao capturar Professores.")
+                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+
                 return StatusCode(StatusCodes.Status404NotFound, alunoExists);
               
         }

@@ -18,15 +18,14 @@ namespace ApiCadastroAlunos.Controllers
         [HttpGet("/api/alunos/list")]
         public async Task<IActionResult> GetAll()
         {
-            var alunoExists = await _aluno.Get();
+                var alunoExists = await _aluno.Get();
 
-            if (alunoExists.Success)
-            {
-                return Ok(alunoExists);
-            }
+                if (alunoExists.Success)
+                {
+                    return Ok(alunoExists);
+                }
 
-            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
-
+                return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
 

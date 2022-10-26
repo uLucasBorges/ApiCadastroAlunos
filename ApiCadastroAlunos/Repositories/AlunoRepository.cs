@@ -1,5 +1,4 @@
 ﻿using ApiCadastroAlunos.Data;
-using ApiCadastroAlunos.Exceptions;
 using ApiCadastroAlunos.ExtensionsMethods;
 using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
