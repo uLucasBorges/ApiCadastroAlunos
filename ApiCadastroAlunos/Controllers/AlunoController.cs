@@ -2,10 +2,13 @@
 using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCadastroAlunos.Controllers
 {
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;
@@ -15,9 +18,15 @@ namespace ApiCadastroAlunos.Controllers
             _aluno = aluno;
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/alunos/list")]
         public async Task<IActionResult> GetAll()
         {
+          
+          
                 var alunoExists = await _aluno.Get();
 
                 if (alunoExists.Success)
@@ -25,14 +34,19 @@ namespace ApiCadastroAlunos.Controllers
                     return Ok(alunoExists);
                 }
 
-            if (alunoExists.Message == "Problemas ao capturar aluno.")
-            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+                if (alunoExists.Message == "Problemas ao capturar aluno.")
+                    return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
-            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+                return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
 
 
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/alunos/search/{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -49,6 +63,10 @@ namespace ApiCadastroAlunos.Controllers
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/alunos/search/name")]
         public async Task<IActionResult> GetByName(string nome, string sobrenome)
         {
@@ -62,12 +80,16 @@ namespace ApiCadastroAlunos.Controllers
             if (alunoExists.Message == "Problemas ao capturar aluno.")
            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
-            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+           return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+
+  
 
         }
-
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
-
         [Route("/api/alunos/create")]
         public async Task<IActionResult> New([FromBody] AlunoViewModel aluno)
         {
@@ -91,7 +113,10 @@ namespace ApiCadastroAlunos.Controllers
 
         }
 
-
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut("/api/set/aluno/{id}")]
         public async Task<IActionResult> Set([FromBody] Aluno aluno)
         {
@@ -115,6 +140,10 @@ namespace ApiCadastroAlunos.Controllers
           
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("api/delete/aluno/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -131,6 +160,7 @@ namespace ApiCadastroAlunos.Controllers
             return StatusCode(404, userExists);
 
         }
+
 
     }
 }

@@ -20,8 +20,9 @@ namespace ApiCadastroAlunos.Repositories
         }
         public async Task<ResultViewModel> Testando()
         {
-            var result = await _db.Professores.Include(x => x.Alunos).ToListAsync();
-        
+            //var result = await _db.Professores.Include(x => x.Alunos).ToListAsync();
+            var result = await _db.Professores.ToListAsync();
+
 
             if (result != null)
                 return new ResultViewModel

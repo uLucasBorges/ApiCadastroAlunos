@@ -42,7 +42,7 @@ namespace ApiCadastroAlunos.Models
         public string? Materia { get; set; }
 
 
-        public List<Aluno>? Alunos { get; set; }
+        //public List<Aluno>? Alunos { get; set; }
 
         public Professor()
         {
@@ -59,6 +59,7 @@ namespace ApiCadastroAlunos.Models
             Celular = celular;
             Cpf = cpf;
             Materia = materia;
+            //Alunos = new List<Aluno>();
         }
     }
 }

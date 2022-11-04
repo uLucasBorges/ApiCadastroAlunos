@@ -1,11 +1,14 @@
 ﻿using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ApiCadastroAlunos.Controllers
 {
+    [Authorize]
     public class ProfessorController : Controller
     {
         private readonly IProfessorRepository _professor;
@@ -15,6 +18,10 @@ namespace ApiCadastroAlunos.Controllers
             _professor = aluno;
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/professores/list")]
         public async Task<IActionResult> GetAll()
         {
@@ -30,7 +37,10 @@ namespace ApiCadastroAlunos.Controllers
               
         }
 
-
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/alunos/by/professor/{id:int:min(1)}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -40,14 +50,17 @@ namespace ApiCadastroAlunos.Controllers
             return StatusCode(200, alunoExists);
 
             if (alunoExists.Message == "Erro ao capturar alunos por Professor.")
-                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
 
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
 
-
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/professor/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -66,6 +79,10 @@ namespace ApiCadastroAlunos.Controllers
 
 
         //retorna todos alunos por professor , ou seja , o professor e sua lista de alunos.
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/professor/teste")]
         public async Task<IActionResult> Teste()
         {
@@ -75,7 +92,10 @@ namespace ApiCadastroAlunos.Controllers
 
         }
 
-
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("/api/professor/create")]
         public async Task<IActionResult> create([FromBody]Professor professor)
         {

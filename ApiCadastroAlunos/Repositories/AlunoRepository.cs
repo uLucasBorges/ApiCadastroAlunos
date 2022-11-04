@@ -83,13 +83,15 @@ namespace ApiCadastroAlunos.Repositories
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = @"SELECT a.id , a.nome  , a.sobrenome, a.email , a.celular , p.id as professorId ,p.nome as nomeProfessor 
+                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email , a.Celular , p.Id as professorId ,p.NomeProfessor as nomeProfessor
                                      FROM
                                      professores p
-                                     INNER JOIN alunos a
-                                     ON a.professorid = p.id
+                                     INNER JOIN Alunos a
+                                     ON a.professorid = p.Id
                                      GROUP BY
-                                     a.id , a.nome,a.sobrenome ,a.email , a.celular, p.id ,p.nome";
+                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id ,p.NomeProfessor
+
+";
 
                    List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query)).ToList();
 
@@ -141,13 +143,13 @@ namespace ApiCadastroAlunos.Repositories
                 using (var conn = bdb.Connection)
                 {
 
-                    string query = @"SELECT a.id , a.nome  , a.sobrenome, a.email , a.celular , p.id as professorId ,p.nome as nomeProfessor 
+                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email , a.Celular , p.Id as professorId ,p.NomeProfessor as nomeProfessor
                                      FROM
                                      professores p
-                                     INNER JOIN alunos a
-                                     ON a.professorid = p.id and a.id = @id
+                                     INNER JOIN Alunos a
+                                     ON a.professorid = p.Id and a.id = @id
                                      GROUP BY
-                                     a.id , a.nome,a.sobrenome ,a.email , a.celular, p.id ,p.nome ";
+                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id ,p.NomeProfessor";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Id = id }));
                     
                     return AlunoValidate.Select(aluno);
