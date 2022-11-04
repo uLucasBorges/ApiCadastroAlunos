@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ApiCadastroAlunos.Models;
+using ApiCadastroAlunos.Models.Validators;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -7,9 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCadastroAlunos.Controllers
 {
-
+    [Produces("application/json")]
+    [ApiController]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public class AlunoController : Controller
+    public class AlunoController : ControllerBase
     {
         private readonly IAlunoRepository _aluno;
 
@@ -18,15 +20,17 @@ namespace ApiCadastroAlunos.Controllers
             _aluno = aluno;
         }
 
+        /// <summary>
+        /// list of student
+        /// </summary>
+        /// <returns>Lista de Alunos</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/alunos/list")]
         public async Task<IActionResult> GetAll()
-        {
-          
-          
+        {   
                 var alunoExists = await _aluno.Get();
 
                 if (alunoExists.Success)
@@ -42,7 +46,11 @@ namespace ApiCadastroAlunos.Controllers
 
 
 
-
+        /// <summary>
+        /// student by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Aluno</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -63,6 +71,13 @@ namespace ApiCadastroAlunos.Controllers
             return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
 
+
+        /// <summary>
+        /// search student by name
+        /// </summary>
+        /// <param name="nome"></param>
+        /// <param name="sobrenome"></param>
+        /// <returns>Aluno</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -82,9 +97,14 @@ namespace ApiCadastroAlunos.Controllers
 
            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
 
-  
-
         }
+
+
+        /// <summary>
+        /// create new student
+        /// </summary>
+        /// <param name="aluno"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -99,7 +119,6 @@ namespace ApiCadastroAlunos.Controllers
             //    return BadRequest(erros);
             //}
 
-
             var alunoCreated = await _aluno.create(aluno);
             if (alunoCreated.Success)
             {
@@ -113,6 +132,13 @@ namespace ApiCadastroAlunos.Controllers
 
         }
 
+
+
+        /// <summary>
+        /// update student existing
+        /// </summary>
+        /// <param name="aluno"></param>
+        /// <returns>Aluno</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -140,6 +166,12 @@ namespace ApiCadastroAlunos.Controllers
           
         }
 
+
+        /// <summary>
+        /// drop student existing
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Aluno</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -160,6 +192,8 @@ namespace ApiCadastroAlunos.Controllers
             return StatusCode(404, userExists);
 
         }
+
+
 
 
     }

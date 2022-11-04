@@ -1,7 +1,9 @@
 ﻿using ApiCadastroAlunos.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.ViewModel
 {
+    [Keyless]
     public class AlunoViewModel
     {
         public string Nome { get; set; }
@@ -10,6 +12,10 @@ namespace ApiCadastroAlunos.ViewModel
         public string email { get; set; }
         public string telefone { get; set; }
 
+        public AlunoViewModel()
+        {
+        }
+
         public AlunoViewModel(string nome, string sobrenome, int professorId, string email, string telefone)
         {
             Nome = nome;
@@ -17,7 +23,7 @@ namespace ApiCadastroAlunos.ViewModel
             ProfessorId = professorId;
             this.email = email;
             this.telefone = telefone;
-        } 
+        }
     }
 
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using ApiCadastroAlunos.Data;
 using ApiCadastroAlunos.Repositories;
@@ -30,8 +31,13 @@ builder.Services.AddSwaggerGen(c =>
             Name = "Email",
             Email = "lucas.carvalho@clear.sale"
         }
-    }); 
-        
+    });
+
+    //serve para documentar controladores (adiconar mensagem/descricao)
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 
   
 
@@ -91,8 +97,6 @@ app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-
     app.UseSwagger();
     app.UseSwaggerUI();
 }

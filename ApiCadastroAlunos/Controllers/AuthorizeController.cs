@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ApiCadastroAlunos.Controllers
 {
-
+    [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
     public class AuthorizeController : ControllerBase
@@ -26,7 +26,11 @@ namespace ApiCadastroAlunos.Controllers
             _configuration = configuration;
         }
 
-
+        /// <summary>
+        /// Register in System
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Usuario</returns>
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUser([FromBody] UserDTO model)
         {
@@ -50,6 +54,12 @@ namespace ApiCadastroAlunos.Controllers
             return Ok(model);
         }
 
+
+        /// <summary>
+        /// Login in System
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns>Your Token Jwt</returns>
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] UserDTO userInfo)
         {

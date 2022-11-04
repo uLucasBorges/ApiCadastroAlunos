@@ -9,15 +9,21 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace ApiCadastroAlunos.Controllers
 {
     [Authorize]
+    [ApiController]
+    [Produces("application/json")]
     public class ProfessorController : Controller
     {
         private readonly IProfessorRepository _professor;
 
         public ProfessorController(IProfessorRepository aluno)
         {
-            _professor = aluno;
+            _professor = aluno; 
         }
 
+        /// <summary>
+        /// list of teacher´s
+        /// </summary>
+        /// <returns>teacher</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -37,6 +43,11 @@ namespace ApiCadastroAlunos.Controllers
               
         }
 
+        /// <summary>
+        /// list of students by teachers
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -57,6 +68,11 @@ namespace ApiCadastroAlunos.Controllers
         }
 
 
+        /// <summary>
+        /// teacher by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>teacher</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -78,20 +94,31 @@ namespace ApiCadastroAlunos.Controllers
         }
 
 
-        //retorna todos alunos por professor , ou seja , o professor e sua lista de alunos.
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet("/api/professor/teste")]
-        public async Task<IActionResult> Teste()
-        {
+        ////retorna todos alunos por professor , ou seja , o professor e sua lista de alunos.
+        ///// <summary>
+        ///// students by teacher Id
+        ///// </summary>
+        ///// <returns>list students</returns>
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //[HttpGet("/api/professor/teste")]
+        //public async Task<IActionResult> Teste()
+        //{
 
-            var result = await _professor.Testando();
-            return StatusCode(StatusCodes.Status200OK, result);
+        //    var result = await _professor.Testando();
+        //    return StatusCode(StatusCodes.Status200OK, result);
 
-        }
+        //}
 
+
+
+        /// <summary>
+        /// create new teacher
+        /// </summary>
+        /// <param name="professor"></param>
+        /// <returns>teacher</returns>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

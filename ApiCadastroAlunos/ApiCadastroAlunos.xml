@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiCadastroAlunos</name>
+    </assembly>
+    <members>
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.GetAll">
+            <summary>
+            list of student
+            </summary>
+            <returns>Lista de Alunos</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.Get(System.Int32)">
+            <summary>
+            student by Id
+            </summary>
+            <param name="id"></param>
+            <returns>Aluno</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.GetByName(System.String,System.String)">
+            <summary>
+            search student by name
+            </summary>
+            <param name="nome"></param>
+            <param name="sobrenome"></param>
+            <returns>Aluno</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.New(ApiCadastroAlunos.ViewModel.AlunoViewModel)">
+            <summary>
+            create new student
+            </summary>
+            <param name="aluno"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.Set(ApiCadastroAlunos.Models.Aluno)">
+            <summary>
+            update student existing
+            </summary>
+            <param name="aluno"></param>
+            <returns>Aluno</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.Delete(System.Int32)">
+            <summary>
+            drop student existing
+            </summary>
+            <param name="id"></param>
+            <returns>Aluno</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AuthorizeController.RegisterUser(ApiCadastroAlunos.DTOs.UserDTO)">
+            <summary>
+            Register in System
+            </summary>
+            <param name="model"></param>
+            <returns>Usuario</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.AuthorizeController.Login(ApiCadastroAlunos.DTOs.UserDTO)">
+            <summary>
+            Login in System
+            </summary>
+            <param name="userInfo"></param>
+            <returns>Your Token Jwt</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.ProfessorController.GetAll">
+            <summary>
+            list of teacher´s
+            </summary>
+            <returns>teacher</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.ProfessorController.Get(System.Int32)">
+            <summary>
+            list of students by teachers
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.ProfessorController.GetById(System.Int32)">
+            <summary>
+            teacher by Id
+            </summary>
+            <param name="id"></param>
+            <returns>teacher</returns>
+        </member>
+        <member name="M:ApiCadastroAlunos.Controllers.ProfessorController.create(ApiCadastroAlunos.Models.Professor)">
+            <summary>
+            create new teacher
+            </summary>
+            <param name="professor"></param>
+            <returns>teacher</returns>
+        </member>
+    </members>
+</doc>

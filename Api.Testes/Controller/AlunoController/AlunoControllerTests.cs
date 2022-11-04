@@ -62,7 +62,7 @@ namespace Api.Testes
             // Assert
             mockAlunoRepository.Verify(x => x.GetById(id), Times.Once);
 
-            Assert.Equal(200, result.StatusCode);
+            Assert.Equal(201, result.StatusCode);
             this.mockRepository.VerifyAll();
         }
 

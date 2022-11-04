@@ -1,6 +1,7 @@
 ﻿using ApiCadastroAlunos.Data;
 using ApiCadastroAlunos.ExtensionsMethods;
 using ApiCadastroAlunos.Models;
+using ApiCadastroAlunos.Models.Validators;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Dapper;
@@ -26,6 +27,8 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
+          
+
                 var Aluno = new Aluno(0,
                         aluno.Nome,
                         aluno.Sobrenome,
@@ -33,12 +36,25 @@ namespace ApiCadastroAlunos.Repositories
                         aluno.telefone,
                         aluno.ProfessorId);
 
-                if (aluno != null)
+                 
+               if(Aluno.IsValid)
+                {
 
-                await _db.Alunos.AddAsync(Aluno);
-                await _db.SaveChangesAsync();
+                    if (aluno != null)
 
-                return AlunoValidate.Create(aluno);
+                    await _db.Alunos.AddAsync(Aluno);
+                    await _db.SaveChangesAsync();
+
+                    return AlunoValidate.Create(aluno);
+                }
+
+                return new ResultViewModel()
+                {
+                    Data = Aluno.Erros,
+                    Message = "Erros encontrados",
+                    Success = false
+
+                };
 
             }
             catch (Exception ex)
@@ -83,17 +99,15 @@ namespace ApiCadastroAlunos.Repositories
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email , a.Celular , p.Id as professorId ,p.NomeProfessor as nomeProfessor
+                    string query = @"SELECT a.Nome  , a.Sobrenome,  p.Id as professorId , a.Email , a.Celular as telefone
                                      FROM
-                                     professores p
+                                     professor p
                                      INNER JOIN Alunos a
                                      ON a.professorid = p.Id
                                      GROUP BY
-                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id ,p.NomeProfessor
+                                     a.Nome  , a.Sobrenome,  p.Id , a.Email , a.Celular";
 
-";
-
-                   List<Aluno> alunos = (await conn.QueryAsync<Aluno>(sql: query)).ToList();
+                   List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query)).ToList();
 
                    return AlunoValidate.List(alunos);
 
@@ -170,15 +184,26 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                var userExists = await this.GetById(aluno.Id);
-
-                if (userExists != null)
+                if (aluno.IsValid)
                 {
-                    _db.Entry(aluno).State = EntityState.Modified;
-                    await _db.SaveChangesAsync();
+                    var userExists = await this.GetById(aluno.Id);
+
+                    if (userExists != null)
+                    {
+                        _db.Entry(aluno).State = EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                    }
+
+                    return AlunoValidate.Update(aluno);
                 }
 
-                 return AlunoValidate.Update(aluno);
+                return new ResultViewModel()
+                {
+                    Data = aluno.Erros,
+                    Message = "Erros encontrados",
+                    Success = false
+
+                };
             }
             catch (Exception ex)
             {

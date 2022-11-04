@@ -84,6 +84,24 @@ namespace Api.Testes
             this.mockRepository.VerifyAll();
         }
 
+        [Fact(DisplayName = "Deve retornar 200 na criação de professores")]
+        public async Task Deve_Retornar_200_Na_Criacao_Professor()
+        {
+            // Arrange
+            var professor = new Professor();
+            var professorController = this.CriarProfessorController();
+            mockProfessorRepository.Setup(x => x.Create(professor)).ReturnsAsync(new ResultViewModel() { Success = true });
+
+            // Act
+            var result = (ObjectResult)await professorController.create(professor);
+
+            // Assert
+            mockProfessorRepository.Verify(x => x.Create(professor), Times.Once);
+
+            Assert.Equal(201, result.StatusCode);
+            this.mockRepository.VerifyAll();
+        }
+
 
 
     }

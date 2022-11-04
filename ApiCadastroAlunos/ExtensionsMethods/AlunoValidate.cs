@@ -73,7 +73,7 @@ namespace ApiCadastroAlunos.ExtensionsMethods
         }
 
 
-        public static ResultViewModel List(List<Aluno> alunos)
+        public static ResultViewModel List(List<AlunoViewModel> alunos)
         {
            
               var failed = new ResultViewModel
