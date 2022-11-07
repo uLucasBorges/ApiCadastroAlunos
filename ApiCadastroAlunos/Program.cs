@@ -1,11 +1,12 @@
 using System.Reflection;
 using System.Text;
-using ApiCadastroAlunos.Data;
-using ApiCadastroAlunos.Models;
+using ApiCadastroAlunos.Core.Interfaces;
+using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.Repositories;
-using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using AutoMapper;
+using CadastroAlunos.Core.Interfaces;
+using CadastroAlunos.Infra.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -79,7 +80,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddScoped<AppDb>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
-builder.Services.AddScoped<IUserServices, UserServicesRepository>();
+builder.Services.AddScoped<IUserServices, UserService>();
 
 #region Token
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();

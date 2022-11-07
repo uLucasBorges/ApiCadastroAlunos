@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using ApiCadastroAlunos.Controllers;
+using ApiCadastroAlunos.Core.Interfaces;
 using ApiCadastroAlunos.Models;
-using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,8 @@
-﻿using ApiCadastroAlunos.Models;
-using ApiCadastroAlunos.Repositories.Interfaces;
+﻿using ApiCadastroAlunos.Core.Interfaces;
+using ApiCadastroAlunos.Core.Models;
+using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.ViewModel;
+using CadastroAlunos.Core.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

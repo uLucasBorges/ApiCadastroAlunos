@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ApiCadastroAlunos.Controllers;
-using ApiCadastroAlunos.DTOs;
-using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
+using CadastroAlunos.Core.DTOs;
+using CadastroAlunos.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;

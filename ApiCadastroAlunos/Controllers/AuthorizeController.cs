@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ApiCadastroAlunos.DTOs;
-using ApiCadastroAlunos.Repositories.Interfaces;
+using CadastroAlunos.Core.DTOs;
+using CadastroAlunos.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

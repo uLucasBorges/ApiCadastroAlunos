@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiCadastroAlunos", "ApiCadastroAlunos\ApiCadastroAlunos.csproj", "{2B0F5970-DA47-4093-8DE7-183CD478A5F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "1 - CadastroAlunos.Api", "ApiCadastroAlunos\1 - CadastroAlunos.Api.csproj", "{2B0F5970-DA47-4093-8DE7-183CD478A5F3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Testes", "Api.Testes\Api.Testes.csproj", "{67651BC7-A0AA-485E-8E2F-C16C5A465894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4 - CadastroAlunos.Tests", "Api.Testes\4 - CadastroAlunos.Tests.csproj", "{67651BC7-A0AA-485E-8E2F-C16C5A465894}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2 - CadastroAlunos.Core", "2 - CadastroAlunos.Domain\2 - CadastroAlunos.Core.csproj", "{624EEF71-C6FB-4164-8C09-7CEB44D61493}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3 - CadastroAlunos.Infra", "3 - CadastroAlunos.Services\3 - CadastroAlunos.Infra.csproj", "{AD1500A8-C89C-4B51-A689-EB1E2B39FB75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{67651BC7-A0AA-485E-8E2F-C16C5A465894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67651BC7-A0AA-485E-8E2F-C16C5A465894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67651BC7-A0AA-485E-8E2F-C16C5A465894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{624EEF71-C6FB-4164-8C09-7CEB44D61493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{624EEF71-C6FB-4164-8C09-7CEB44D61493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{624EEF71-C6FB-4164-8C09-7CEB44D61493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{624EEF71-C6FB-4164-8C09-7CEB44D61493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD1500A8-C89C-4B51-A689-EB1E2B39FB75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD1500A8-C89C-4B51-A689-EB1E2B39FB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD1500A8-C89C-4B51-A689-EB1E2B39FB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD1500A8-C89C-4B51-A689-EB1E2B39FB75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

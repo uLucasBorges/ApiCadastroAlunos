@@ -1,9 +1,10 @@
 ﻿
 using ApiCadastroAlunos.Models;
-using ApiCadastroAlunos.Repositories.Interfaces;
+using CadastroAlunos.Core.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ApiCadastroAlunos.Core.Interfaces;
 
 namespace ApiCadastroAlunos.Controllers
 {
