@@ -17,19 +17,19 @@ namespace Api.Testes
     {
         private readonly MockRepository mockRepository;
         private readonly Mock<IUserServices> _mockService;
-        private readonly Mock<IConfiguration> _mockConfiguration;
+        private readonly IConfiguration _configuration;
 
         public AuthorizeControllerTests()
         {
+            _configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             this.mockRepository = new MockRepository(MockBehavior.Loose);
-            this._mockConfiguration = this.mockRepository.Create<IConfiguration>();
             this._mockService = this.mockRepository.Create<IUserServices>();
 
         }
 
         private AuthorizeController CriarAuthorizeController()
         {
-            return new AuthorizeController(_mockService.Object,_mockConfiguration.Object);
+            return new AuthorizeController(_mockService.Object,_configuration);
         }
 
 

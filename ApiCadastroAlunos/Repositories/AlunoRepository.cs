@@ -50,6 +50,7 @@ namespace ApiCadastroAlunos.Repositories
                     Message = "Erros encontrados!",
                     Success = false
                 };
+
             }
             catch (Exception ex)
             {
