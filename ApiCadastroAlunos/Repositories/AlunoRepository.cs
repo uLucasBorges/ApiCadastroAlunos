@@ -4,7 +4,9 @@ using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Models.Validators;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
+using AutoMapper;
 using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.Repositories
@@ -16,46 +18,38 @@ namespace ApiCadastroAlunos.Repositories
 
         private readonly AppDbContext _db;
         private readonly AppDb bdb;
+        private readonly IMapper _mapper;
 
-        public AlunoRepository(AppDbContext db, AppDb bdb)
+        public AlunoRepository(AppDbContext db, AppDb bdb , IMapper mapper)
         {
             _db = db;
             this.bdb = bdb;
+            _mapper = mapper;
         }
 
-        public async Task<ResultViewModel> create(AlunoViewModel aluno)
+        public async Task<ResultViewModel> create([FromBody]AlunoViewModel aluno)
         {
             try
             {
-          
+                var Aluno = _mapper.Map<Aluno>(aluno);
 
-                var Aluno = new Aluno(0,
-                        aluno.Nome,
-                        aluno.Sobrenome,
-                        aluno.email,
-                        aluno.telefone,
-                        aluno.ProfessorId);
-
-                 
-               if(Aluno.IsValid)
+                if (Aluno.IsValid)
                 {
-
-                    if (aluno != null)
+                    if (Aluno != null)
 
                     await _db.Alunos.AddAsync(Aluno);
                     await _db.SaveChangesAsync();
 
-                    return AlunoValidate.Create(aluno);
+                    return AlunoValidate<Aluno>.Create(Aluno);
                 }
+
 
                 return new ResultViewModel()
                 {
                     Data = Aluno.Erros,
-                    Message = "Erros encontrados",
+                    Message = "Erros encontrados!",
                     Success = false
-
                 };
-
             }
             catch (Exception ex)
             {
@@ -73,13 +67,14 @@ namespace ApiCadastroAlunos.Repositories
             try
             {
                 var userExists = await this.GetById(id);
-                if (userExists.Data != null)
+                var alunoTransfer = _mapper.Map<Aluno>(userExists.Data);
+                if (alunoTransfer != null)
                 {
-                    _db.Alunos.Remove(userExists.Data);
-                    _db.SaveChanges();         
+                   _db.Alunos.Remove(alunoTransfer);
+                   await _db.SaveChangesAsync();         
                 }
 
-                return AlunoValidate.Delete(userExists);
+                return AlunoValidate<Aluno>.Delete(alunoTransfer);
 
             }
             catch (Exception ex)
@@ -99,17 +94,17 @@ namespace ApiCadastroAlunos.Repositories
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = @"SELECT a.Nome  , a.Sobrenome,  p.Id as professorId , a.Email , a.Celular as telefone
+                    string query = @"SELECT a.Id, a.Nome  , a.Sobrenome,  p.Id as professorId , a.Email , a.Celular
                                      FROM
                                      professor p
                                      INNER JOIN Alunos a
                                      ON a.professorid = p.Id
                                      GROUP BY
-                                     a.Nome  , a.Sobrenome,  p.Id , a.Email , a.Celular";
+                                     a.Id , a.Nome  , a.Sobrenome,  p.Id , a.Email , a.Celular";
 
                    List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query)).ToList();
 
-                   return AlunoValidate.List(alunos);
+                   return AlunoValidate<AlunoViewModel>.List(alunos);
 
                 }
 
@@ -133,9 +128,9 @@ namespace ApiCadastroAlunos.Repositories
                 {
                     string query = "SELECT * FROM Alunos WHERE Nome = @Nome and sobrenome = @Sobrenome";
                     
-                    var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Nome = Nome, Sobrenome = Sobrenome }));
+                    var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Nome = Nome, Sobrenome = Sobrenome }));
 
-                   return AlunoValidate.Select(aluno);
+                   return AlunoValidate<AlunoViewModel>.Select(aluno);
 
                 }
             }
@@ -157,16 +152,16 @@ namespace ApiCadastroAlunos.Repositories
                 using (var conn = bdb.Connection)
                 {
 
-                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email , a.Celular , p.Id as professorId ,p.NomeProfessor as nomeProfessor
+                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email as email , a.Celular as celular , p.Id as ProfessorId
                                      FROM
-                                     professores p
+                                     professor p
                                      INNER JOIN Alunos a
-                                     ON a.professorid = p.Id and a.id = @id
+                                     ON a.professorid = p.Id and a.id = 1
                                      GROUP BY
-                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id ,p.NomeProfessor";
-                    var aluno = (await conn.QueryFirstOrDefaultAsync<Aluno>(sql: query, new { Id = id }));
+                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id";
+                    var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Id = id }));
                     
-                    return AlunoValidate.Select(aluno);
+                    return AlunoValidate<AlunoViewModel>.Select(aluno);
                 }
             }
             catch (SystemException ex)
@@ -180,30 +175,34 @@ namespace ApiCadastroAlunos.Repositories
          
         }
 
-        public async Task<ResultViewModel> Update(Aluno aluno)
+        public async Task<ResultViewModel> Update(AlunoViewModel aluno)
         {
             try
             {
-                if (aluno.IsValid)
-                {
+                var alunoTransfer = _mapper.Map<Aluno>(aluno);
+
+
+                if (alunoTransfer.IsValid){
+
                     var userExists = await this.GetById(aluno.Id);
 
-                    if (userExists != null)
+                    if (userExists.Data != null)
                     {
-                        _db.Entry(aluno).State = EntityState.Modified;
+                        _db.Entry(alunoTransfer).State = EntityState.Modified;
                         await _db.SaveChangesAsync();
                     }
 
-                    return AlunoValidate.Update(aluno);
-                }
+                    return AlunoValidate<Aluno>.Update(alunoTransfer);
 
+                }
                 return new ResultViewModel()
                 {
-                    Data = aluno.Erros,
+                    Data = alunoTransfer.Erros,
                     Message = "Erros encontrados",
                     Success = false
 
                 };
+
             }
             catch (Exception ex)
             {

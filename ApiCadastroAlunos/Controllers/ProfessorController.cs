@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ApiCadastroAlunos.Controllers
 {
-    [Authorize]
     [ApiController]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class ProfessorController : Controller
     {
         private readonly IProfessorRepository _professor;
@@ -131,18 +131,28 @@ namespace ApiCadastroAlunos.Controllers
             //    var erros = ModelState.SelectMany(x => x.Value.Errors);
             //    return BadRequest(erros);
             //}
+            if (professor.IsValid)
+            {
+
+                var created = await _professor.Create(professor);
+
+                if (created.Success)
+                    return StatusCode(StatusCodes.Status201Created, created);
+
+                if (created.Message == "Problemas ao criar professor.")
+                    return StatusCode(StatusCodes.Status500InternalServerError, created);
 
 
-            var created = await _professor.Create(professor);
+                return StatusCode(StatusCodes.Status409Conflict, created);
+            }
 
-            if (created.Success)
-            return StatusCode(StatusCodes.Status201Created, created);
+            return BadRequest(new ResultViewModel()
+            {
+                Data = professor.Erros,
+                Message = "Erros encontrados",
+                Success = false
 
-            if (created.Message == "Problemas ao criar professor.")
-            return StatusCode(StatusCodes.Status500InternalServerError, created);
-
-
-            return StatusCode(StatusCodes.Status409Conflict, created);
+            });
 
         }
 

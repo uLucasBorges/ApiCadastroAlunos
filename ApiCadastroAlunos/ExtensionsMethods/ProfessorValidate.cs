@@ -3,16 +3,16 @@ using ApiCadastroAlunos.ViewModel;
 
 namespace ApiCadastroAlunos.ExtensionsMethods
 {
-    public static class ProfessorValidate
+    public static class ProfessorValidate<T>
     {
-        public static ResultViewModel Create(Professor professor)
+        public static ResultViewModel Create(T t)
         {
 
             var sucess = new ResultViewModel
             {
                 Message = "Professor criado com sucesso!",
                 Success = true,
-                Data = professor
+                Data = t
             };
 
             var failed = new ResultViewModel
@@ -22,7 +22,7 @@ namespace ApiCadastroAlunos.ExtensionsMethods
 
             };
 
-            return professor != null ? sucess : failed;
+            return t != null ? sucess : failed;
 
         }
 
@@ -31,7 +31,7 @@ namespace ApiCadastroAlunos.ExtensionsMethods
 
 
 
-        public static ResultViewModel List(List<ProfessorViewModel> professores)
+        public static ResultViewModel List(List<T> T)
         {
 
             var failed = new ResultViewModel
@@ -43,17 +43,17 @@ namespace ApiCadastroAlunos.ExtensionsMethods
 
             var sucess = new ResultViewModel
             {
-                Data = professores,
+                Data = T,
                 Message = "Professores encontrados.",
                 Success = true
             };
 
-            return professores.Count > 0 ? sucess : failed;
+            return T.Count > 0 ? sucess : failed;
 
 
         }
 
-        public static ResultViewModel ListAlunos(List<AlunoViewModel> alunos)
+        public static ResultViewModel ListAlunos(List<T> T)
         {
 
             var failed = new ResultViewModel
@@ -65,19 +65,19 @@ namespace ApiCadastroAlunos.ExtensionsMethods
 
             var sucess = new ResultViewModel
             {
-                Data = alunos,
+                Data = T,
                 Message = "Alunos encontrados.",
                 Success = true
             };
 
-            return alunos.Count > 0 ? sucess : failed;
+            return T.Count > 0 ? sucess : failed;
 
 
         }
 
 
 
-        public static ResultViewModel Select(ProfessorViewModel professor)
+        public static ResultViewModel Select(T T)
         {
 
             var failed = new ResultViewModel
@@ -89,12 +89,12 @@ namespace ApiCadastroAlunos.ExtensionsMethods
 
             var sucess = new ResultViewModel
             {
-                Data = professor,
+                Data = T,
                 Message = "Professor encontrado.",
                 Success = true
             };
 
-            return professor != null ? sucess : failed;
+            return T != null ? sucess : failed;
         }
     }
 }

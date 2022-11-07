@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
 using ApiCadastroAlunos.Models;
-using ApiCadastroAlunos.Models.Validators;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -8,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCadastroAlunos.Controllers
 {
-    [Produces("application/json")]
+
     [ApiController]
+    [Produces("application/json")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public class AlunoController : ControllerBase
+    public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;
 
@@ -113,11 +113,6 @@ namespace ApiCadastroAlunos.Controllers
         [Route("/api/alunos/create")]
         public async Task<IActionResult> New([FromBody] AlunoViewModel aluno)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    var erros = ModelState.SelectMany(x => x.Value.Errors);
-            //    return BadRequest(erros);
-            //}
 
             var alunoCreated = await _aluno.create(aluno);
             if (alunoCreated.Success)
@@ -125,7 +120,7 @@ namespace ApiCadastroAlunos.Controllers
                 return Ok(alunoCreated);
             }
 
-            if (alunoCreated.Message == "Problemas ao criar aluno.")
+            if (alunoCreated.Message == "Problemas ao criar aluno." || alunoCreated.Message == "Erros encontrados!")
             return StatusCode(StatusCodes.Status500InternalServerError, alunoCreated);
 
             return StatusCode(StatusCodes.Status404NotFound, alunoCreated);
@@ -144,26 +139,19 @@ namespace ApiCadastroAlunos.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut("/api/set/aluno/{id}")]
-        public async Task<IActionResult> Set([FromBody] Aluno aluno)
+        public async Task<IActionResult> Set([FromBody] AlunoViewModel aluno)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    var erros = ModelState.SelectMany(x => x.Value.Errors);
-            //    return BadRequest(erros);
-            //}
-
-
+            
             var alunoExists = await _aluno.Update(aluno);
 
-            if (alunoExists.Success)
-            return Ok(alunoExists);
-            
+                if (alunoExists.Success)
+                    return Ok(alunoExists);
 
-            if (alunoExists.Message == "Problemas ao atualizar aluno.")
-            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+                if (alunoExists.Message == "Problemas ao atualizar aluno." || alunoExists.Message == "Erros encontrados!")
+                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
-            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
-          
+                return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+
         }
 
 

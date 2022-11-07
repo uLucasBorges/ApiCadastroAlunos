@@ -1,8 +1,11 @@
 using System.Reflection;
 using System.Text;
 using ApiCadastroAlunos.Data;
+using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories;
 using ApiCadastroAlunos.Repositories.Interfaces;
+using ApiCadastroAlunos.ViewModel;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +76,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddScoped<AppDb>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
+builder.Services.AddScoped<IUserServices, UserServicesRepository>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme).
@@ -90,6 +94,18 @@ builder.Services.AddAuthentication(
      });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+#region AutoMapper
+
+var autoMapperConfig = new MapperConfiguration(cfg =>
+{
+    cfg.CreateMap<AlunoViewModel, Aluno>().ReverseMap();
+    cfg.CreateMap<ResultViewModel, Aluno>().ReverseMap();
+    //cfg.CreateMap<CreateUserViewModel, UserDTO>().ReverseMap();
+});
+
+builder.Services.AddSingleton(autoMapperConfig.CreateMapper());
+
+#endregion
 
 var app = builder.Build();
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

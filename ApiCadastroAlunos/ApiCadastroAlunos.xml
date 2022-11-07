@@ -32,7 +32,7 @@
             <param name="aluno"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.Set(ApiCadastroAlunos.Models.Aluno)">
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.Set(ApiCadastroAlunos.ViewModel.AlunoViewModel)">
             <summary>
             update student existing
             </summary>

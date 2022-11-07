@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using ApiCadastroAlunos.DTOs;
+using ApiCadastroAlunos.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,19 +13,19 @@ namespace ApiCadastroAlunos.Controllers
     [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
-    public class AuthorizeController : ControllerBase
+    public class AuthorizeController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+
+        private readonly IUserServices _service;
         private readonly IConfiguration _configuration;
 
-        public AuthorizeController(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+        public AuthorizeController(IUserServices service, IConfiguration configuration)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _service = service;
             _configuration = configuration;
         }
+
+
 
         /// <summary>
         /// Register in System
@@ -34,24 +35,21 @@ namespace ApiCadastroAlunos.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUser([FromBody] UserDTO model)
         {
+      
+            var result = await _service.Register(model);
 
-            var user = new IdentityUser
+            if (!result.Success)
             {
-                UserName = model.Email,
-                Email = model.Email,
-                EmailConfirmed = true
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
+                return BadRequest(result.Data);
             }
 
-            await _userManager.AddToRoleAsync(user, "Member");
-            await _signInManager.SignInAsync(user, false);
-            return Ok(model);
+            var autorizacao = GerarToken(model);
+            autorizacao.Token = "autentique-se.";
+            autorizacao.Authenticated = false;
+            autorizacao.Expiration = DateTime.Now.AddHours(0);
+            autorizacao.Message = "você foi cadastrado com sucesso.";
+
+            return Ok(autorizacao);
         }
 
 
@@ -61,7 +59,7 @@ namespace ApiCadastroAlunos.Controllers
         /// <param name="userInfo"></param>
         /// <returns>Your Token Jwt</returns>
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] UserDTO userInfo)
+        public async Task<ActionResult> Login([FromBody] UserDTO model)
         {
             //verifica se o modelo é válido
             if (!ModelState.IsValid)
@@ -69,13 +67,11 @@ namespace ApiCadastroAlunos.Controllers
                 return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
             }
 
-            //verifica as credenciais do usuário e retorna um valor
-            var result = await _signInManager.PasswordSignInAsync(userInfo.Email,
-                userInfo.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _service.Login(model);
 
-            if (result.Succeeded)
+            if (result.Success)
             {
-                return Ok(GerarToken(userInfo));
+                return Ok(GerarToken(model));
             }
             else
             {

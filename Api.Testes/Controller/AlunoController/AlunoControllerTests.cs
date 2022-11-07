@@ -4,6 +4,7 @@ using ApiCadastroAlunos.Controllers;
 using ApiCadastroAlunos.Models;
 using ApiCadastroAlunos.Repositories.Interfaces;
 using ApiCadastroAlunos.ViewModel;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -14,7 +15,6 @@ namespace Api.Testes
     {
         private readonly MockRepository mockRepository;
         private readonly Mock<IAlunoRepository> mockAlunoRepository;
-
 
 
         public AlunoControllerTests()
@@ -93,7 +93,7 @@ namespace Api.Testes
          {
             // Arrange
             var alunooController = this.CriarAlunoController();
-            var aluno = new AlunoViewModel(It.IsAny<string>() , It.IsAny<string>() , It.IsAny<int>() , It.IsAny<string>() , It.IsAny<string>());
+            var aluno = new AlunoViewModel(It.IsAny<int>() ,It.IsAny<string>() , It.IsAny<string>() , It.IsAny<string>() , It.IsAny<string>() , It.IsAny<int>());
             mockAlunoRepository.Setup(x => x.create(aluno)).ReturnsAsync(new ResultViewModel() { Data = aluno , Success = true});
 
             // Act
@@ -128,7 +128,7 @@ namespace Api.Testes
         public async Task Deve_Retornar_200_Atualizar_Aluno()
         {
             // Arrange
-            var aluno = new Aluno();
+            var aluno = new AlunoViewModel();
             var alunooController = this.CriarAlunoController();
             mockAlunoRepository.Setup(x => x.Update(aluno)).ReturnsAsync(new ResultViewModel() { Data = aluno, Success = true });
 

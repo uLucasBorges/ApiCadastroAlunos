@@ -1,4 +1,5 @@
-﻿using ApiCadastroAlunos.Models;
+﻿using System.Text.Json.Serialization;
+using ApiCadastroAlunos.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCadastroAlunos.ViewModel
@@ -6,23 +7,26 @@ namespace ApiCadastroAlunos.ViewModel
     [Keyless]
     public class AlunoViewModel
     {
+        public int Id { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
-        public int ProfessorId { get; set; }
         public string email { get; set; }
-        public string telefone { get; set; }
+        public string celular { get; set; }
+        public int ProfessorId { get; set; }
+
 
         public AlunoViewModel()
         {
         }
 
-        public AlunoViewModel(string nome, string sobrenome, int professorId, string email, string telefone)
+        public AlunoViewModel(int id, string nome, string sobrenome, string email, string celular, int professorId)
         {
+            Id = id;
             Nome = nome;
             Sobrenome = sobrenome;
-            ProfessorId = professorId;
             this.email = email;
-            this.telefone = telefone;
+            this.celular = celular;
+            ProfessorId = professorId;
         }
     }
 

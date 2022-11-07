@@ -28,13 +28,14 @@ namespace ApiCadastroAlunos.Models
 
         [Required(ErrorMessage = "é obrigatório se matricular em uma aula")]
         public int? professorId { get; private set; }
-        [JsonIgnore]
-        public Professor? professor { get; private set; }
+
+        //[JsonIgnore]
+        //public Professor? professor { get; private set; }
 
 
         public Aluno() {}
 
-        public Aluno(int id, string nome, string sobrenome, string email, string celular, int professorId)
+        public Aluno(int id, string? nome, string? sobrenome, string? email, string? celular, int? professorId)
         {
             Id = id;
             Nome = nome;
@@ -45,7 +46,6 @@ namespace ApiCadastroAlunos.Models
             _errors = new List<string>();
             Validate();
         }
-
 
         public bool Validate() => base.Validate(new AlunoValidator(), this);
 

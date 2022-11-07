@@ -20,8 +20,8 @@ namespace ApiCadastroAlunos.Repositories
         }
         public async Task<ResultViewModel> Testando()
         {
-            var result = await _db.Professor.Include(x => x.Alunos).ToListAsync();
-            //var result = await _db.Professor.ToListAsync();
+            //var result = await _db.Professor.Include(x => x.Alunos).ToListAsync();
+            var result = await _db.Professor.ToListAsync();
 
 
             if (result != null)
@@ -53,7 +53,7 @@ namespace ApiCadastroAlunos.Repositories
 
                     List<ProfessorViewModel> professores = (await conn.QueryAsync<ProfessorViewModel>(sql: query)).ToList();
 
-                    return ProfessorValidate.List(professores);
+                    return ProfessorValidate<ProfessorViewModel>.List(professores);
                 }
 
             }
@@ -83,7 +83,7 @@ namespace ApiCadastroAlunos.Repositories
 
                     ProfessorViewModel professor = (await conn.QueryAsync<ProfessorViewModel>(sql: query , new {Id = id})).FirstOrDefault();
                     
-                    return ProfessorValidate.Select(professor);
+                    return ProfessorValidate<ProfessorViewModel>.Select(professor);
                 }
 
             }
@@ -102,15 +102,15 @@ namespace ApiCadastroAlunos.Repositories
             {
                 using (var conn = bdb.Connection)
                 {
-                    string query = @"SELECT a.Nome, a.Sobrenome , a.professorid as ProfessorId, a.email , a.celular as telefone
+                    string query = @"SELECT a.Id , a.Nome, a.Sobrenome , a.professorid as ProfessorId, a.email , a.Celular
                                      FROM
                                      professor p, alunos a
-                                     WHERE p.id = a.professorid and p.id = 1
+                                     WHERE p.id = a.professorid and p.id = @Id
                                      GROUP BY
-                                     a.Nome , a.Sobrenome , a.professorid , a.Email , a.Celular , a.professorid";
+                                     a.Id , a.Nome , a.Sobrenome , a.professorid , a.Email , a.Celular , a.professorid";
                     List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query, new { Id = id })).ToList();
 
-                    return ProfessorValidate.ListAlunos(alunos);
+                    return ProfessorValidate<AlunoViewModel>.ListAlunos(alunos);
                 }
 
             }
@@ -133,7 +133,7 @@ namespace ApiCadastroAlunos.Repositories
                 await _db.Professor.AddAsync(professor);
                 await _db.SaveChangesAsync();
 
-                return ProfessorValidate.Create(professor);
+                return ProfessorValidate<Professor>.Create(professor);
 
             }
             catch (Exception ex)
