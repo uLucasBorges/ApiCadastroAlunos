@@ -9,5 +9,12 @@
         public ResultViewModel()
         {
         }
+
+        public ResultViewModel(string message, bool success, dynamic data)
+        {
+            Message = message;
+            Success = success;
+            Data = data;
+        }
     }
 }

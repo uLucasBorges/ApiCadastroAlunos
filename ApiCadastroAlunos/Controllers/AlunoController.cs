@@ -11,6 +11,7 @@ namespace ApiCadastroAlunos.Controllers
 
     [ApiController]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;

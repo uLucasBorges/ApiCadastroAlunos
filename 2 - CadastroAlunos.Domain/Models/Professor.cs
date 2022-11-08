@@ -48,9 +48,10 @@ public class Professor : Base
 
     public Professor()
     {
+        _errors = new List<string>();
     }
 
-    public Professor(int id, string nome, string sobrenome, string cep, string logradouro, string cidade, string celular, string cpf, string materia)
+    public Professor(int id, string? nome, string? sobrenome, string? cep, string? logradouro, string? cidade, string? celular, string? cpf, string? materia)
     {
         Id = id;
         Nome = nome;
@@ -61,7 +62,6 @@ public class Professor : Base
         Celular = celular;
         Cpf = cpf;
         Materia = materia;
-        //Alunos = new List<Aluno>();
         _errors = new List<string>();
         Validate();
     }
