@@ -7,18 +7,21 @@ using CadastroAlunos.Core.Interfaces;
 using CadastroAlunos.Infra.Data;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ApiCadastroAlunos.Repositories
 {
     public class ProfessorRepository : IProfessorRepository
     {
+        private readonly ILogger<ProfessorRepository> _logger;
         private readonly AppDb bdb;
         private readonly AppDbContext _db;
 
-        public ProfessorRepository(AppDb bdb, AppDbContext db)
+        public ProfessorRepository(AppDb bdb, AppDbContext db, ILogger<ProfessorRepository> logger)
         {
             this.bdb = bdb;
             _db = db;
+            _logger = logger;
         }
         public async Task<ResultViewModel> Testando()
         {
@@ -61,6 +64,9 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (SystemException ex)
             {
+
+                _logger.Log(LogLevel.Error, ex, "erro ao capturar professores.");
+
                 return new ResultViewModel
                 {
                     Message = "Erro ao capturar Professores."
@@ -91,6 +97,8 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (SystemException ex)
             {
+                _logger.Log(LogLevel.Error, ex, "erro ao capturar professor.");
+
                 return new ResultViewModel
                 {
                     Message = "Erro ao capturar Professor."
@@ -118,8 +126,11 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (SystemException ex)
             {
+                _logger.Log(LogLevel.Error, ex, "erro ao capturar alunos de determinado professor.");
+
                 return new ResultViewModel
                 {
+
                     Message = "Erro ao capturar alunos por Professor."
                 };
             }
@@ -140,6 +151,8 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error, ex, "erro ao criar professor.");
+
                 return new ResultViewModel
                 {
                     Message = "Problemas ao criar professor.",

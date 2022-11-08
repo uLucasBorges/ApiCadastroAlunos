@@ -11,7 +11,6 @@ namespace ApiCadastroAlunos.Controllers
 
     [ApiController]
     [Produces("application/json")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;
@@ -31,8 +30,10 @@ namespace ApiCadastroAlunos.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("/api/alunos/list")]
         public async Task<IActionResult> GetAll()
-        {   
-                var alunoExists = await _aluno.Get();
+        {
+            //_logger.LogTrace($"Iniciando busca de informações de alunos");
+
+            var alunoExists = await _aluno.Get();
 
                 if (alunoExists.Success)
                 {

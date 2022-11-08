@@ -9,11 +9,14 @@ using ApiCadastroAlunos.ExtensionsMethods;
 using Dapper;
 using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.Core.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace ApiCadastroAlunos.Repositories
 {
     public class AlunoRepository : IAlunoRepository
     {
+        private readonly ILogger<AlunoRepository> _logger;
+
 
         //metodos de inserir com o EF , metodos de get com o dapper;
 
@@ -21,11 +24,12 @@ namespace ApiCadastroAlunos.Repositories
         private readonly AppDb bdb;
         private readonly IMapper _mapper;
 
-        public AlunoRepository(AppDbContext db, AppDb bdb , IMapper mapper)
+        public AlunoRepository(AppDbContext db, AppDb bd , IMapper mapper, ILogger<AlunoRepository> logger)
         {
             _db = db;
-            this.bdb = bdb;
+            bdb = bd;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<ResultViewModel> create([FromBody]AlunoViewModel aluno)
@@ -98,7 +102,7 @@ namespace ApiCadastroAlunos.Repositories
                 {
                     string query = @"SELECT a.Id, a.Nome  , a.Sobrenome,  p.Id as professorId , a.Email , a.Celular
                                      FROM
-                                     professor p
+                                     professo p
                                      INNER JOIN Alunos a
                                      ON a.professorid = p.Id
                                      GROUP BY
@@ -113,6 +117,10 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (SystemException ex)
             {
+
+
+                _logger.Log(LogLevel.Error, ex, "erro ao capturar alunos.");
+
                 return new ResultViewModel
                 {
                     Message = "Problemas ao capturar aluno.",
@@ -138,6 +146,8 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (SystemException ex)
             {
+                _logger.Log(LogLevel.Error, ex, "erro ao capturar aluno.");
+
                 return new ResultViewModel
                 {
                     Message = "Problemas ao capturar aluno.",
@@ -168,6 +178,8 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (SystemException ex)
             {
+                _logger.Log(LogLevel.Error, ex, "erro ao capturar aluno.");
+
                 return new ResultViewModel
                 {
                     Message = "Problemas ao capturar aluno.",
@@ -208,6 +220,8 @@ namespace ApiCadastroAlunos.Repositories
             }
             catch (Exception ex)
             {
+                _logger.Log(LogLevel.Error, ex, "erro ao atualizar aluno.");
+
                 return new ResultViewModel
                 {
                     Message = "Problemas ao atualizar aluno.",
