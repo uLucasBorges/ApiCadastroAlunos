@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using ApiCadastroAlunos.Core.Interfaces;
 using ApiCadastroAlunos.Core.Models;
@@ -16,7 +17,7 @@ using NLog;
 using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddCors();
 // Add services to the container.
 NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -31,6 +32,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
 builder.Host.UseNLog();
+
 
 #region Documentar o swagger
 builder.Services.AddSwaggerGen(c =>
@@ -60,8 +62,8 @@ builder.Services.AddSwaggerGen(c =>
 
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
+        BearerFormat = "JWT",
         Description = "Header de autorização JWT usando o esquema Bearer.\r\n\r\nInforme 'Bearer'[espaço] e o seu token.\r\n\r\nExamplo: \'Bearer 12345abcdef\'",
     });
 
@@ -74,7 +76,10 @@ builder.Services.AddSwaggerGen(c =>
              {
                  Type = ReferenceType.SecurityScheme,
                  Id = "Bearer"
-             }
+             },
+              Scheme = "oauth2",
+              Name = "Bearer",
+              In = ParameterLocation.Header
           },
           new string[] {}
        }
@@ -89,22 +94,39 @@ builder.Services.AddScoped<AppDb>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
 builder.Services.AddScoped<IUserServices, UserService>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Member", policy =>
+    {
+        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireClaim(ClaimTypes.Role, "Member");
+    });
+
+    options.AddPolicy("Admin", policy =>
+    {
+        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireClaim(ClaimTypes.Role, "Admin");
+    });
+});
+
 
 #region Token
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-builder.Services.AddAuthentication(
-    JwtBearerDefaults.AuthenticationScheme).
-    AddJwtBearer(options =>
+builder.Services.AddAuthentication(x => {
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
      options.TokenValidationParameters = new TokenValidationParameters
      {
          ValidateIssuer = true,
-         ValidateAudience = true,
+         ValidateAudience = false,
          ValidateLifetime = true,
          ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
          ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
          ValidateIssuerSigningKey = true,
          IssuerSigningKey = new SymmetricSecurityKey(
-             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
      });
 
 #endregion
@@ -131,6 +153,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

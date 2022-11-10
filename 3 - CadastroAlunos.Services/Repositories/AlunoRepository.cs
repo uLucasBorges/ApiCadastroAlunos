@@ -102,7 +102,7 @@ namespace ApiCadastroAlunos.Repositories
                 {
                     string query = @"SELECT a.Id, a.Nome  , a.Sobrenome,  p.Id as professorId , a.Email , a.Celular
                                      FROM
-                                     professo p
+                                     professor p
                                      INNER JOIN Alunos a
                                      ON a.professorid = p.Id
                                      GROUP BY
@@ -164,13 +164,13 @@ namespace ApiCadastroAlunos.Repositories
                 using (var conn = bdb.Connection)
                 {
 
-                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email as email , a.Celular as celular , p.Id as ProfessorId
+                    string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email as email , a.Celular as celular , p.Id as ProfessorId , p.Nome as professorNome
                                      FROM
                                      professor p
                                      INNER JOIN Alunos a
-                                     ON a.professorid = p.Id and a.id = 1
+                                     ON a.professorid = p.Id and a.id = @Id
                                      GROUP BY
-                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id";
+                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id , p.Nome";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Id = id }));
                     
                     return AlunoValidate<AlunoViewModel>.Select(aluno);

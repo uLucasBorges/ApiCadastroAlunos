@@ -3,6 +3,7 @@ using CadastroAlunos.Core.DTOs;
 using CadastroAlunos.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ApiCadastroAlunos.Repositories
 {
@@ -12,17 +13,30 @@ namespace ApiCadastroAlunos.Repositories
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly RoleManager<IdentityRole> _role;
 
         public UserService(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+            SignInManager<IdentityUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> role)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _role = role;
         } 
 
         public async Task<ResultViewModel> Register(UserDTO model)
         {
+            var userExists = _userManager.Users.Where(x => x.UserName == model.Email).FirstOrDefault();
+            if(userExists != null)
+            {
+                return new ResultViewModel()
+                {
+                    Data = userExists,
+                    Message = "Usuário já existente",
+                    Success = false
+                };           
+            }
+
             var user = new IdentityUser
             {
                 UserName = model.Email,
@@ -41,8 +55,10 @@ namespace ApiCadastroAlunos.Repositories
                 };
             }
 
-            await _userManager.AddToRoleAsync(user, "Member");
-            await _signInManager.SignInAsync(user, false);
+
+            var roleName = await ValidationRole();
+            await _userManager.AddToRoleAsync(user, roleName);
+
             return new ResultViewModel()
             {
                 Data = model,
@@ -50,6 +66,7 @@ namespace ApiCadastroAlunos.Repositories
                 Success = true
             };
         }
+
 
 
         public async Task<ResultViewModel> Login(UserDTO userInfo)
@@ -76,5 +93,22 @@ namespace ApiCadastroAlunos.Repositories
             
 
         }
+        
+        private async Task<string> ValidationRole()
+        {
+            var roleNames = new List<string>() { "Admin", "Member" };
+
+            foreach (string name in roleNames)
+            {
+                var roleExist = await _role.RoleExistsAsync(name);
+                if (!roleExist)
+                {
+                    IdentityResult result = await _role.CreateAsync(new IdentityRole(name));
+                }
+            }
+
+            return roleNames[1];
+        }
+
     }
 }

@@ -13,6 +13,7 @@ namespace ApiCadastroAlunos.ViewModel
         public string email { get; set; }
         public string celular { get; set; }
         public int ProfessorId { get; set; }
+        public string professorNome { get; set; }
 
 
         public AlunoViewModel()

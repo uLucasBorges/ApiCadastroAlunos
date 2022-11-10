@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiCadastroAlunos.Core.Interfaces;
 
+
 namespace ApiCadastroAlunos.Controllers
 {
 
     [ApiController]
     [Produces("application/json")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize("Admin")]
     public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;
@@ -33,6 +34,7 @@ namespace ApiCadastroAlunos.Controllers
         public async Task<IActionResult> GetAll()
         {
             //_logger.LogTrace($"Iniciando busca de informações de alunos");
+
 
             var alunoExists = await _aluno.Get();
 
@@ -58,6 +60,7 @@ namespace ApiCadastroAlunos.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize("Admin")]
         [HttpGet("/api/alunos/search/{id}")]
         public async Task<IActionResult> Get(int id)
         {

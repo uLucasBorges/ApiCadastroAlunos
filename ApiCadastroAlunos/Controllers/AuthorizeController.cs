@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RestSharp;
+using System.Web;
 
 namespace ApiCadastroAlunos.Controllers
 {
-    [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
     public class AuthorizeController : Controller
@@ -40,7 +41,7 @@ namespace ApiCadastroAlunos.Controllers
 
             if (!result.Success)
             {
-                return BadRequest(result.Data);
+                return BadRequest(result.Message);
             }
 
             var autorizacao = GerarToken(model);
@@ -56,7 +57,7 @@ namespace ApiCadastroAlunos.Controllers
         /// <summary>
         /// Login in System
         /// </summary>
-        /// <param name="userInfo"></param>
+        /// <param name="model"></param>
         /// <returns>Your Token Jwt</returns>
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] UserDTO model)
@@ -85,12 +86,13 @@ namespace ApiCadastroAlunos.Controllers
         private UsuarioToken GerarToken(UserDTO userInfo)
         {
             //define declarações do usuário
-            var claims = new[]
+  
+            var claims = new []
             {
                  new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-             };
+            };
 
             //gera uma chave com base em um algoritmo simetrico
             var key = new SymmetricSecurityKey(
@@ -110,6 +112,7 @@ namespace ApiCadastroAlunos.Controllers
               expires: expiration,
               signingCredentials: credenciais);
 
+
             //retorna os dados com o token e informacoes
             return new UsuarioToken()
             {
@@ -118,6 +121,7 @@ namespace ApiCadastroAlunos.Controllers
                 Expiration = expiration,
                 Message = "Token JWT OK"
             };
+
 
            
         }

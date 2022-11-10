@@ -57,7 +57,7 @@
             <summary>
             Login in System
             </summary>
-            <param name="userInfo"></param>
+            <param name="model"></param>
             <returns>Your Token Jwt</returns>
         </member>
         <member name="M:ApiCadastroAlunos.Controllers.ProfessorController.GetAll">

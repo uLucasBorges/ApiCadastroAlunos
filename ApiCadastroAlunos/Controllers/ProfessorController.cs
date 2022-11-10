@@ -12,7 +12,7 @@ namespace ApiCadastroAlunos.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize("Admin")]
     public class ProfessorController : Controller
     {
         private readonly IProfessorRepository _professor;

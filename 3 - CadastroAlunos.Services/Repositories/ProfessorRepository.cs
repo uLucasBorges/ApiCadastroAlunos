@@ -81,7 +81,7 @@ namespace ApiCadastroAlunos.Repositories
                 using (var conn = bdb.Connection)
                 {
 
-                    string query = @"SELECT p.Id AS Id, p.Nome AS nome , p.Sobrenome , p.Cep , p.Logradouro , p.Cidade, p.Celular , p.Cpf , p.materia AS Materia,
+                    string query = @"SELECT p.Id AS Id, p.Nome AS nome , p.Sobrenome , p.Cep , p.Logradouro , p.Cidade, p.Celular , p.Cpf , p.materia AS Materia ,
                                      (SELECT COUNT(1) FROM alunos a  WHERE a.professorid = p.id) alunos
                                      FROM
                                      professor p, alunos a
