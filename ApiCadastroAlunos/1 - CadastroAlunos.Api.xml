@@ -4,7 +4,7 @@
         <name>1 - CadastroAlunos.Api</name>
     </assembly>
     <members>
-        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.GetAll(System.String,System.String)">
+        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.GetAll">
             <summary>
             list of student
             </summary>

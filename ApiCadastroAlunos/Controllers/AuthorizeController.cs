@@ -72,7 +72,13 @@ namespace ApiCadastroAlunos.Controllers
 
             if (result.Success)
             {
-                return Ok(GerarToken(model));
+                var JWT = GerarToken(model);
+                HttpContext.Response.Cookies.Append("token", JWT.Token, new Microsoft.AspNetCore.Http.CookieOptions
+                {
+                    Expires = DateTime.Now.AddHours(2)
+                });
+
+                return Ok(JWT);
             }
             else
             {
@@ -89,7 +95,7 @@ namespace ApiCadastroAlunos.Controllers
 
             var claims = new[]
             {
-                 //new Claim(ClaimTypes.Role , "Member"),
+                 new Claim(ClaimTypes.Role , "Member"),
                  new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
