@@ -5,14 +5,14 @@ using ApiCadastroAlunos.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiCadastroAlunos.Core.Interfaces;
-
+using Microsoft.AspNetCore.Cors;
 
 namespace ApiCadastroAlunos.Controllers
 {
 
     [ApiController]
     [Produces("application/json")]
-    [Authorize("Admin")]
+    [Authorize("Member")]
     public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;

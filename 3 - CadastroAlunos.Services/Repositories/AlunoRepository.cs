@@ -15,7 +15,6 @@ namespace ApiCadastroAlunos.Repositories
 {
     public class AlunoRepository : IAlunoRepository
     {
-        private readonly ILogger<AlunoRepository> _logger;
 
 
         //metodos de inserir com o EF , metodos de get com o dapper;
@@ -23,6 +22,8 @@ namespace ApiCadastroAlunos.Repositories
         private readonly AppDbContext _db;
         private readonly AppDb bdb;
         private readonly IMapper _mapper;
+        private readonly ILogger<AlunoRepository> _logger;
+
 
         public AlunoRepository(AppDbContext db, AppDb bd , IMapper mapper, ILogger<AlunoRepository> logger)
         {

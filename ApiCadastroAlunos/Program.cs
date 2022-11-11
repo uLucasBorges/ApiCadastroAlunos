@@ -33,7 +33,6 @@ builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
 builder.Host.UseNLog();
 
-
 #region Documentar o swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -88,29 +87,34 @@ builder.Services.AddSwaggerGen(c =>
 
 #endregion
 
-
+#region registrar serviços
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<AppDb>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
 builder.Services.AddScoped<IUserServices, UserService>();
+
+#endregion
+
+#region Autenticação e Autorização
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Member", policy =>
     {
         policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-        policy.RequireClaim(ClaimTypes.Role, "Member");
+        //policy.RequireClaim(ClaimTypes.Role, "Member");
+        policy.RequireRole("Member");
     });
 
     options.AddPolicy("Admin", policy =>
     {
         policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-        policy.RequireClaim(ClaimTypes.Role, "Admin");
+        //policy.RequireClaim(ClaimTypes.Role, "Admin");
+        policy.RequireRole("Admin");
     });
 });
+ 
 
-
-#region Token
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddAuthentication(x => {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -146,7 +150,6 @@ builder.Services.AddSingleton(autoMapperConfig.CreateMapper());
 
 var app = builder.Build();
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

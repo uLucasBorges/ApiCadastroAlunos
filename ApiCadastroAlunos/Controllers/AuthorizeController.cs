@@ -86,9 +86,10 @@ namespace ApiCadastroAlunos.Controllers
         private UsuarioToken GerarToken(UserDTO userInfo)
         {
             //define declarações do usuário
-  
-            var claims = new []
+
+            var claims = new[]
             {
+                 //new Claim(ClaimTypes.Role , "Member"),
                  new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

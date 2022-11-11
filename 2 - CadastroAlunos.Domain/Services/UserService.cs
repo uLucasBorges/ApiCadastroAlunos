@@ -56,8 +56,8 @@ namespace ApiCadastroAlunos.Repositories
             }
 
 
-            var roleName = await ValidationRole();
-            await _userManager.AddToRoleAsync(user, roleName);
+            await ValidationRole();
+            await _userManager.AddToRoleAsync(user, "Member");
 
             return new ResultViewModel()
             {
@@ -94,7 +94,7 @@ namespace ApiCadastroAlunos.Repositories
 
         }
         
-        private async Task<string> ValidationRole()
+        private async Task ValidationRole()
         {
             var roleNames = new List<string>() { "Admin", "Member" };
 
@@ -103,11 +103,10 @@ namespace ApiCadastroAlunos.Repositories
                 var roleExist = await _role.RoleExistsAsync(name);
                 if (!roleExist)
                 {
-                    IdentityResult result = await _role.CreateAsync(new IdentityRole(name));
+                     await _role.CreateAsync(new IdentityRole(name));
                 }
             }
 
-            return roleNames[1];
         }
 
     }
