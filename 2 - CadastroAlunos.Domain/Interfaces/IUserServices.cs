@@ -1,4 +1,5 @@
-﻿using ApiCadastroAlunos.ViewModel;
+﻿using System.Collections;
+using ApiCadastroAlunos.ViewModel;
 using CadastroAlunos.Core.DTOs;
 
 namespace CadastroAlunos.Core.Interfaces
@@ -7,5 +8,6 @@ namespace CadastroAlunos.Core.Interfaces
     {
         Task<ResultViewModel> Register(UserDTO model);
         Task<ResultViewModel> Login(UserDTO model);
+
     }
 }

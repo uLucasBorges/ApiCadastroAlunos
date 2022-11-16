@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RestSharp;
 using System.Web;
+using ApiCadastroAlunos.ViewModel;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ApiCadastroAlunos.Controllers
 {
@@ -44,13 +46,13 @@ namespace ApiCadastroAlunos.Controllers
                 return BadRequest(result.Message);
             }
 
-            var autorizacao = GerarToken(model);
-            autorizacao.Token = "autentique-se.";
-            autorizacao.Authenticated = false;
-            autorizacao.Expiration = DateTime.Now.AddHours(0);
-            autorizacao.Message = "você foi cadastrado com sucesso.";
-
-            return Ok(autorizacao);
+            return Ok(new ResultViewModel
+            {
+                Data = model.Email,
+                Message = "Cadastro realizado.",
+                Success = true
+                
+            });
         }
 
 
@@ -94,13 +96,13 @@ namespace ApiCadastroAlunos.Controllers
             //define declarações do usuário
 
             var claims = new[]
-            {
-                 new Claim(ClaimTypes.Role , "Member"),
+            {    new Claim(ClaimTypes.Role, "Member"),
                  new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
+            var teste = claims;
             //gera uma chave com base em um algoritmo simetrico
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

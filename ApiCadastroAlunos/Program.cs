@@ -6,6 +6,7 @@ using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.Repositories;
 using ApiCadastroAlunos.ViewModel;
 using AutoMapper;
+using CadastroAlunos.Core.DTOs;
 using CadastroAlunos.Core.Interfaces;
 using CadastroAlunos.Infra.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -102,14 +103,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Member", policy =>
     {
         policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-        //policy.RequireClaim(ClaimTypes.Role, "Member");
         policy.RequireRole("Member");
     });
 
     options.AddPolicy("Admin", policy =>
     {
         policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-        //policy.RequireClaim(ClaimTypes.Role, "Admin");
         policy.RequireRole("Admin");
     });
 });
@@ -141,6 +140,7 @@ var autoMapperConfig = new MapperConfiguration(cfg =>
 {
     cfg.CreateMap<AlunoViewModel, Aluno>().ReverseMap();
     cfg.CreateMap<ResultViewModel, Aluno>().ReverseMap();
+    cfg.CreateMap<UserDTO, IdentityUser>().ReverseMap();
     //cfg.CreateMap<CreateUserViewModel, UserDTO>().ReverseMap();
 });
 
