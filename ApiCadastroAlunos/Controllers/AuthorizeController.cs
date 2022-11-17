@@ -36,6 +36,7 @@ namespace ApiCadastroAlunos.Controllers
         /// <param name="model"></param>
         /// <returns>Usuario</returns>
         [HttpPost("register")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         public async Task<ActionResult> RegisterUser([FromBody] UserDTO model)
         {
       
@@ -74,7 +75,7 @@ namespace ApiCadastroAlunos.Controllers
 
             if (result.Success)
             {
-                var JWT = GerarToken(model);
+                var JWT = await GerarToken(model);
                 HttpContext.Response.Cookies.Append("token", JWT.Token, new Microsoft.AspNetCore.Http.CookieOptions
                 {
                     Expires = DateTime.Now.AddHours(2)
@@ -91,21 +92,35 @@ namespace ApiCadastroAlunos.Controllers
 
 
 
-        private UsuarioToken GerarToken(UserDTO userInfo)
+        private async Task<UsuarioToken> GerarToken(UserDTO userInfo)
         {
             //define declarações do usuário
 
-            var claims = new[]
-            {    new Claim(ClaimTypes.Role, "Member"),
+            var claims = new List<Claim> {
                  new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var teste = claims;
+            var user = new IdentityUser
+            {
+                UserName = userInfo.Email,
+                Email = userInfo.Email,
+                EmailConfirmed = true
+            };
+
+            
+            var roles = await _service.GetRoles(user);
+
+            foreach(var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+
             //gera uma chave com base em um algoritmo simetrico
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
             //gera a assinatura digital do token usando o algoritmo Hmac e a chave privada
             var credenciais = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

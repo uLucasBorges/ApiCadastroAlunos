@@ -12,7 +12,7 @@ namespace ApiCadastroAlunos.Controllers
 
     [ApiController]
     [Produces("application/json")]
-    [Authorize("Member")]
+    [Authorize(Roles = "Member")]
     public class AlunoController : Controller
     {
         private readonly IAlunoRepository _aluno;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using ApiCadastroAlunos.ViewModel;
 using CadastroAlunos.Core.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace CadastroAlunos.Core.Interfaces
 {
@@ -8,6 +9,6 @@ namespace CadastroAlunos.Core.Interfaces
     {
         Task<ResultViewModel> Register(UserDTO model);
         Task<ResultViewModel> Login(UserDTO model);
-
+        Task<IList<string>> GetRoles(IdentityUser user);
     }
 }

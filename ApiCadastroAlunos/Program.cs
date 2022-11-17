@@ -76,10 +76,7 @@ builder.Services.AddSwaggerGen(c =>
              {
                  Type = ReferenceType.SecurityScheme,
                  Id = "Bearer"
-             },
-              Scheme = "oauth2",
-              Name = "Bearer",
-              In = ParameterLocation.Header
+             }
           },
           new string[] {}
        }
@@ -95,24 +92,29 @@ builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
 builder.Services.AddScoped<IUserServices, UserService>();
 
+
 #endregion
 
 #region Autenticação e Autorização
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Member", policy =>
-    {
-        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-        policy.RequireRole("Member");
-    });
+builder.Services.AddAuthorization(options => options.AddPolicy("Admin", politica => { politica.RequireRole("Admin"); }));
 
-    options.AddPolicy("Admin", policy =>
-    {
-        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-        policy.RequireRole("Admin");
-    });
-});
- 
+builder.Services.AddAuthorization(options => options.AddPolicy("Member", politica => { politica.RequireRole("Member"); }));
+
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("Member", policy =>
+//    {
+//        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+//        policy.RequireRole("Member");
+//    });
+
+//    options.AddPolicy("Admin", policy =>
+//    {
+//        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+//        policy.RequireRole("Admin");
+//    });
+//});
+
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddAuthentication(x => {
@@ -123,13 +125,14 @@ builder.Services.AddAuthentication(x => {
      options.TokenValidationParameters = new TokenValidationParameters
      {
          ValidateIssuer = true,
-         ValidateAudience = false,
+         ValidateAudience = true,
          ValidateLifetime = true,
          ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
          ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
          ValidateIssuerSigningKey = true,
          IssuerSigningKey = new SymmetricSecurityKey(
-         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"])),
+         ClockSkew = TimeSpan.Zero
      });
 
 #endregion
