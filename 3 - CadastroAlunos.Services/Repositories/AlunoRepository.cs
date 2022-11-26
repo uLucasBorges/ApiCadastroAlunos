@@ -5,11 +5,11 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using CadastroAlunos.Infra.Data;
 using System.Web.Http;
-using ApiCadastroAlunos.ExtensionsMethods;
 using Dapper;
 using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.Core.Interfaces;
 using Microsoft.Extensions.Logging;
+using ApiCadastroAlunos.Utilities;
 
 namespace ApiCadastroAlunos.Repositories
 {
@@ -46,7 +46,7 @@ namespace ApiCadastroAlunos.Repositories
                     await _db.Alunos.AddAsync(Aluno);
                     await _db.SaveChangesAsync();
 
-                    return AlunoValidate<Aluno>.Create(Aluno);
+                    return Responses<Aluno>.Create(Aluno);
                 }
 
 
@@ -81,7 +81,7 @@ namespace ApiCadastroAlunos.Repositories
                    await _db.SaveChangesAsync();         
                 }
 
-                return AlunoValidate<Aluno>.Delete(alunoTransfer);
+                return Responses<Aluno>.Delete(alunoTransfer);
 
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace ApiCadastroAlunos.Repositories
 
                    List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query)).ToList();
 
-                   return AlunoValidate<AlunoViewModel>.List(alunos);
+                   return Responses<AlunoViewModel>.List(alunos);
 
                 }
 
@@ -141,7 +141,7 @@ namespace ApiCadastroAlunos.Repositories
                     
                     var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Nome = Nome, Sobrenome = Sobrenome }));
 
-                   return AlunoValidate<AlunoViewModel>.Select(aluno);
+                   return Responses<AlunoViewModel>.Select(aluno);
 
                 }
             }
@@ -173,8 +173,8 @@ namespace ApiCadastroAlunos.Repositories
                                      GROUP BY
                                      a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id , p.Nome";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Id = id }));
-                    
-                    return AlunoValidate<AlunoViewModel>.Select(aluno);
+
+                    return Responses<AlunoViewModel>.Select(aluno);
                 }
             }
             catch (SystemException ex)
@@ -207,7 +207,7 @@ namespace ApiCadastroAlunos.Repositories
                         await _db.SaveChangesAsync();
                     }
 
-                    return AlunoValidate<Aluno>.Update(alunoTransfer);
+                    return Responses<Aluno>.Update(alunoTransfer);
 
                 }
                 return new ResultViewModel()

@@ -108,7 +108,7 @@ namespace ApiCadastroAlunos.Repositories
             foreach (string name in roleNames)
             {
                 var roleExist =  await _role.RoleExistsAsync(name);
-                if (roleExist == null)
+                if (roleExist != true)
                 {
                       await _role.CreateAsync(new IdentityRole(name));
                 }

@@ -1,7 +1,7 @@
 ﻿using ApiCadastroAlunos.Core.Interfaces;
 using ApiCadastroAlunos.Core.Models;
-using ApiCadastroAlunos.ExtensionsMethods;
 using ApiCadastroAlunos.Models;
+using ApiCadastroAlunos.Utilities;
 using ApiCadastroAlunos.ViewModel;
 using CadastroAlunos.Core.Interfaces;
 using CadastroAlunos.Infra.Data;
@@ -58,7 +58,7 @@ namespace ApiCadastroAlunos.Repositories
 
                     List<ProfessorViewModel> professores = (await conn.QueryAsync<ProfessorViewModel>(sql: query)).ToList();
 
-                    return ProfessorValidate<ProfessorViewModel>.List(professores);
+                    return Responses<ProfessorViewModel>.List(professores);
                 }
 
             }
@@ -91,7 +91,7 @@ namespace ApiCadastroAlunos.Repositories
 
                     ProfessorViewModel professor = (await conn.QueryAsync<ProfessorViewModel>(sql: query , new {Id = id})).FirstOrDefault();
                     
-                    return ProfessorValidate<ProfessorViewModel>.Select(professor);
+                    return Responses<ProfessorViewModel>.Select(professor);
                 }
 
             }
@@ -120,7 +120,7 @@ namespace ApiCadastroAlunos.Repositories
                                      a.Id , a.Nome , a.Sobrenome , a.professorid , a.Email , a.Celular , a.professorid";
                     List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query, new { Id = id })).ToList();
 
-                    return ProfessorValidate<AlunoViewModel>.ListAlunos(alunos);
+                    return Responses<AlunoViewModel>.List(alunos);
                 }
 
             }
@@ -146,7 +146,7 @@ namespace ApiCadastroAlunos.Repositories
                 await _db.Professor.AddAsync(professor);
                 await _db.SaveChangesAsync();
 
-                return ProfessorValidate<Professor>.Create(professor);
+                return Responses<Professor>.Create(professor);
 
             }
             catch (Exception ex)

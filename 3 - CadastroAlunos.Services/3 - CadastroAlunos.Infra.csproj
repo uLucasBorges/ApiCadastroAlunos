@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="NLog" Version="5.0.5" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
+    <PackageReference Include="vue" Version="2.6.11" />
   </ItemGroup>
 
   <ItemGroup>
