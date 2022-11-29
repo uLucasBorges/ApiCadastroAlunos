@@ -31,7 +31,7 @@ namespace ApiCadastroAlunos.Repositories
 
         public async Task<ResultViewModel> Register(UserDTO model)
         {
-            var userExists = _userManager.Users.Where(x => x.UserName == model.Email).FirstOrDefault();
+            var userExists = _userManager.Users.Where(x => x.UserName == model.Name).FirstOrDefault();
             if (userExists != null)
             {
                 return new ResultViewModel()
@@ -44,7 +44,7 @@ namespace ApiCadastroAlunos.Repositories
 
             var user = new IdentityUser
             {
-                UserName = model.Email,
+                UserName = model.Name,
                 Email = model.Email,
                 EmailConfirmed = true
             };
@@ -75,7 +75,7 @@ namespace ApiCadastroAlunos.Repositories
 
         public async Task<ResultViewModel> Login(UserDTO userInfo)
         {
-            var result = await _signInManager.PasswordSignInAsync(userInfo.Email,
+            var result = await _signInManager.PasswordSignInAsync(userInfo.Name,
             userInfo.Password, isPersistent: false, lockoutOnFailure: false);
 
 
@@ -119,7 +119,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             var userr = _userManager.Users.Where(x => x.UserName == user.UserName).FirstOrDefault();
           
-            IList<string> roles = await _userManager.GetRolesAsync(userr);
+            IList<string>? roles = await _userManager.GetRolesAsync(userr);
             return roles;
         }
     }

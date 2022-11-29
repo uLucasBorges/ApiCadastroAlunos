@@ -38,13 +38,8 @@ namespace Api.Testes
         public async Task Deve_Retornar_200_Na_Criacao_Usuario()
         {
             // Arrange
-            var user = new UserDTO()
-            {
-                Email = "hugo.teste@clear.sale",
-                Password = "154874Uu@",
-                ConfirmPassword = "154874Uu@"
-            };
-
+            var user = new UserDTO("Teste", "hugo.teste@clear.sale", "154874Uu@", "154874Uu@");
+         
             var authorizeController = this.CriarAuthorizeController();
             _mockService.Setup(x => x.Register(user)).ReturnsAsync(new ResultViewModel { Data = user, Message = "Usuário registrado.", Success = true});
 
@@ -64,12 +59,8 @@ namespace Api.Testes
         public async Task Deve_Retornar_200_No_Login_Usuario()
         {
             // Arrange
-            var user = new UserDTO()
-            {
-                Email = "hugo.teste@clear.sale",
-                Password = "154874Uu@",
-                ConfirmPassword = "154874Uu@"
-            };
+            var user = new UserDTO("Teste", "hugo.teste@clear.sale", "154874Uu@", "154874Uu@");
+
 
             var authorizeController = this.CriarAuthorizeController();
             _mockService.Setup(x => x.Login(user)).ReturnsAsync(new ResultViewModel { Data = user, Success = true });

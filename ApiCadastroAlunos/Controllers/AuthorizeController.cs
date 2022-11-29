@@ -44,7 +44,7 @@ namespace ApiCadastroAlunos.Controllers
 
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.Data);
             }
 
             return Ok(new ResultViewModel
@@ -97,14 +97,14 @@ namespace ApiCadastroAlunos.Controllers
             //define declarações do usuário
 
             var claims = new List<Claim> {
-                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
+                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Name),
                  new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var user = new IdentityUser
             {
-                UserName = userInfo.Email,
+                UserName = userInfo.Name,
                 Email = userInfo.Email,
                 EmailConfirmed = true
             };
