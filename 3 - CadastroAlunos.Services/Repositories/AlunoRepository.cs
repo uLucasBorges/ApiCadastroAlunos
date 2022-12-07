@@ -10,6 +10,7 @@ using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using ApiCadastroAlunos.Utilities;
+using _2___CadastroAlunos.Domain.Notification;
 
 namespace ApiCadastroAlunos.Repositories
 {
@@ -18,19 +19,20 @@ namespace ApiCadastroAlunos.Repositories
 
 
         //metodos de inserir com o EF , metodos de get com o dapper;
-
+        private readonly INotificationContext _notification;
         private readonly AppDbContext _db;
         private readonly AppDb bdb;
         private readonly IMapper _mapper;
         private readonly ILogger<AlunoRepository> _logger;
 
 
-        public AlunoRepository(AppDbContext db, AppDb bd , IMapper mapper, ILogger<AlunoRepository> logger)
+        public AlunoRepository(AppDbContext db, AppDb bd , IMapper mapper, ILogger<AlunoRepository> logger, INotificationContext notification)
         {
             _db = db;
             bdb = bd;
             _mapper = mapper;
             _logger = logger;
+            _notification = notification;
         }
 
         public async Task<ResultViewModel> create([FromBody]AlunoViewModel aluno)
@@ -48,7 +50,6 @@ namespace ApiCadastroAlunos.Repositories
 
                     return Responses<Aluno>.Create(Aluno);
                 }
-
 
                 return new ResultViewModel()
                 {
@@ -77,11 +78,14 @@ namespace ApiCadastroAlunos.Repositories
                 var alunoTransfer = _mapper.Map<Aluno>(userExists.Data);
                 if (alunoTransfer != null)
                 {
-                   _db.Alunos.Remove(alunoTransfer);
-                   await _db.SaveChangesAsync();         
+                    _db.Alunos.Remove(alunoTransfer);
+                   await _db.SaveChangesAsync();
+                   return Responses<Aluno>.Delete(alunoTransfer);
                 }
 
-                return Responses<Aluno>.Delete(alunoTransfer);
+                _notification.AddNotification(500, "Aluno não existente");
+                return new ResultViewModel();
+
 
             }
             catch (Exception ex)
@@ -130,32 +134,6 @@ namespace ApiCadastroAlunos.Repositories
             }
         }
 
-        public async Task<ResultViewModel> GetBy(string Nome, string Sobrenome)
-        {
-
-            try
-            {
-                using (var conn = bdb.Connection)
-                {
-                    string query = "SELECT * FROM Alunos WHERE Nome = @Nome and sobrenome = @Sobrenome";
-                    
-                    var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Nome = Nome, Sobrenome = Sobrenome }));
-
-                   return Responses<AlunoViewModel>.Select(aluno);
-
-                }
-            }
-            catch (SystemException ex)
-            {
-                _logger.Log(LogLevel.Error, ex, "erro ao capturar aluno.");
-
-                return new ResultViewModel
-                {
-                    Message = "Problemas ao capturar aluno.",
-                    Success = false
-                };
-            }
-        }
 
         public async Task<ResultViewModel> GetById(int id)
         {

@@ -44,7 +44,7 @@ namespace ApiCadastroAlunos.Controllers
 
             if (!result.Success)
             {
-                return BadRequest(result.Data);
+                return BadRequest(result.Message);
             }
 
             return Ok(new ResultViewModel

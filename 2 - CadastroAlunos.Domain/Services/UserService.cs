@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using _2___CadastroAlunos.Domain.Notification;
 using ApiCadastroAlunos.ViewModel;
 using AutoMapper;
 using CadastroAlunos.Core.DTOs;
@@ -12,7 +13,7 @@ namespace ApiCadastroAlunos.Repositories
 {
     public class UserService : IUserServices
     {
-
+        private readonly INotificationContext _notificationContext;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
@@ -20,20 +21,25 @@ namespace ApiCadastroAlunos.Repositories
         private readonly IMapper _mapper;
 
         public UserService(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> role, IMapper mapper)
+            SignInManager<IdentityUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> role, IMapper mapper, INotificationContext notificationContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _role = role;
             _mapper = mapper;
-        }
+            _notificationContext = notificationContext;
 
-        public async Task<ResultViewModel> Register(UserDTO model)
+    }
+
+    public async Task<ResultViewModel> Register(UserDTO model)
         {
             var userExists = _userManager.Users.Where(x => x.UserName == model.Name).FirstOrDefault();
+
+
             if (userExists != null)
             {
+                _notificationContext.AddNotification(500, $"Usuário já existente.");
                 return new ResultViewModel()
                 {
                     Data = userExists,

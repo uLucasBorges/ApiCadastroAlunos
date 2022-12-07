@@ -6,18 +6,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiCadastroAlunos.Core.Interfaces;
 using Microsoft.AspNetCore.Cors;
+using _2___CadastroAlunos.Domain.Notification;
 
 namespace ApiCadastroAlunos.Controllers
 {
 
     [ApiController]
     [Produces("application/json")]
-    [Authorize(Roles = "Member")]
-    public class AlunoController : Controller
+    public class AlunoController : BaseController
     {
         private readonly IAlunoRepository _aluno;
 
-        public AlunoController(IAlunoRepository aluno)
+        public AlunoController(IAlunoRepository aluno , INotificationContext _context) : base (_context)
         {
             _aluno = aluno;
         }
@@ -35,16 +35,15 @@ namespace ApiCadastroAlunos.Controllers
         {
             //_logger.LogTrace($"Iniciando busca de informações de alunos");
 
-
             var alunoExists = await _aluno.Get();
 
                 if (alunoExists.Success)
                 {
-                    return Ok(alunoExists);
+                    return Ok(alunoExists.Data);
                 }
 
                 if (alunoExists.Message == "Problemas ao capturar aluno.")
-                    return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
 
                 return StatusCode(StatusCodes.Status404NotFound, alunoExists);
         }
@@ -60,7 +59,6 @@ namespace ApiCadastroAlunos.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize("Admin")]
         [HttpGet("/api/alunos/search/{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -68,7 +66,7 @@ namespace ApiCadastroAlunos.Controllers
 
             if (alunoExists.Success)
             {
-                return Created("Alunos encontrado com Sucesso !!", alunoExists);
+                return Created("Alunos encontrado com Sucesso !!", alunoExists.Data);
             }
 
             if (alunoExists.Message == "Problemas ao capturar aluno.")
@@ -78,32 +76,6 @@ namespace ApiCadastroAlunos.Controllers
         }
 
 
-        /// <summary>
-        /// search student by name
-        /// </summary>
-        /// <param name="nome"></param>
-        /// <param name="sobrenome"></param>
-        /// <returns>Aluno</returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet("/api/alunos/search/name")]
-        public async Task<IActionResult> GetByName(string nome, string sobrenome)
-        {
-            var alunoExists = await _aluno.GetBy(nome, sobrenome);
-
-            if (alunoExists.Success)
-            {
-                return Ok(alunoExists);
-            }
-
-            if (alunoExists.Message == "Problemas ao capturar aluno.")
-           return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
-
-           return StatusCode(StatusCodes.Status404NotFound, alunoExists);
-
-        }
 
 
         /// <summary>
@@ -173,22 +145,17 @@ namespace ApiCadastroAlunos.Controllers
         [HttpDelete("api/delete/aluno/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            
             var userExists = await _aluno.Delete(id);
           
             if (userExists.Success)
-            return Ok(userExists);
+            return Ok(userExists.Data);
 
             if (userExists.Message == "Problemas ao deletar aluno.")
-            return StatusCode(StatusCodes.Status500InternalServerError, userExists);
+            return Response(StatusCode(StatusCodes.Status500InternalServerError, userExists));
 
 
             return StatusCode(404, userExists);
 
         }
-
-
-
-
     }
 }

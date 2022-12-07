@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using _2___CadastroAlunos.Domain.Notification;
 using ApiCadastroAlunos.Core.Interfaces;
 using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.Repositories;
@@ -91,6 +92,8 @@ builder.Services.AddScoped<AppDb>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
 builder.Services.AddScoped<IUserServices, UserService>();
+builder.Services.AddScoped<INotificationContext, NotificationContext>();
+
 
 
 #endregion

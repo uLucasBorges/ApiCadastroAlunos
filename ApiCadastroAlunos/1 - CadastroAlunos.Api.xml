@@ -17,14 +17,6 @@
             <param name="id"></param>
             <returns>Aluno</returns>
         </member>
-        <member name="M:ApiCadastroAlunos.Controllers.AlunoController.GetByName(System.String,System.String)">
-            <summary>
-            search student by name
-            </summary>
-            <param name="nome"></param>
-            <param name="sobrenome"></param>
-            <returns>Aluno</returns>
-        </member>
         <member name="M:ApiCadastroAlunos.Controllers.AlunoController.New(ApiCadastroAlunos.ViewModel.AlunoViewModel)">
             <summary>
             create new student

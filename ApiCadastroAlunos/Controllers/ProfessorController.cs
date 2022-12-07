@@ -12,7 +12,6 @@ namespace ApiCadastroAlunos.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Authorize("Member")]
     public class ProfessorController : Controller
     {
         private readonly IProfessorRepository _professor;
@@ -36,7 +35,7 @@ namespace ApiCadastroAlunos.Controllers
                 var alunoExists = await _professor.Get();
 
                 if (alunoExists.Success)
-                return StatusCode(200, alunoExists);
+                return Ok(alunoExists.Data);
 
                 if(alunoExists.Message == "Erro ao capturar Professores.")
                 return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
@@ -60,7 +59,7 @@ namespace ApiCadastroAlunos.Controllers
 
             var alunoExists = await _professor.GetAlunosPorProfessor(id);
             if (alunoExists.Success)
-            return StatusCode(200, alunoExists);
+            return Ok(alunoExists.Data);
 
             if (alunoExists.Message == "Erro ao capturar alunos por Professor.")
             return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
@@ -85,7 +84,7 @@ namespace ApiCadastroAlunos.Controllers
 
             var alunoExists = await _professor.GetById(id);
             if (alunoExists.Success)
-            return StatusCode(200, alunoExists);
+            return StatusCode(200, alunoExists.Data);
 
             if (alunoExists.Message == "Erro ao capturar Professor.")
             return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
