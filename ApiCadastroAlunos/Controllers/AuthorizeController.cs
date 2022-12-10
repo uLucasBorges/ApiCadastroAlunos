@@ -76,11 +76,7 @@ namespace ApiCadastroAlunos.Controllers
             if (result.Success)
             {
                 var JWT = await GerarToken(model);
-                HttpContext.Response.Cookies.Append("token", JWT.Token, new Microsoft.AspNetCore.Http.CookieOptions
-                {
-                    Expires = DateTime.Now.AddHours(2)
-                });
-
+          
                 return Ok(JWT);
             }
             else

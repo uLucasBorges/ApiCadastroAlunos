@@ -12,6 +12,7 @@ namespace ApiCadastroAlunos.Controllers
 {
 
     [ApiController]
+    [Authorize(Policy = "School")]
     [Produces("application/json")]
     public class AlunoController : BaseController
     {

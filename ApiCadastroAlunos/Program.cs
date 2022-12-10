@@ -68,20 +68,25 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Header de autorização JWT usando o esquema Bearer.\r\n\r\nInforme 'Bearer'[espaço] e o seu token.\r\n\r\nExamplo: \'Bearer 12345abcdef\'",
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-       {
-          new OpenApiSecurityScheme
-          {
-             Reference = new OpenApiReference
-             {
-                 Type = ReferenceType.SecurityScheme,
-                 Id = "Bearer"
-             }
-          },
-          new string[] {}
-       }
-    });
+    c.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement()
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                },
+                                Scheme = "oauth2",
+                                Name = "Bearer",
+                                In = ParameterLocation.Header
+                            },
+                            new List<string>()
+                        }
+                    });
+
 });
 
 #endregion
@@ -93,15 +98,20 @@ builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IProfessorRepository, ProfessorRepository>();
 builder.Services.AddScoped<IUserServices, UserService>();
 builder.Services.AddScoped<INotificationContext, NotificationContext>();
-
-
-
 #endregion
 
-#region Autenticação e Autorização
-builder.Services.AddAuthorization(options => options.AddPolicy("Admin", politica => { politica.RequireRole("Admin"); }));
 
-builder.Services.AddAuthorization(options => options.AddPolicy("Member", politica => { politica.RequireRole("Member"); }));
+#region Autenticação e Autorização
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("School", policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role,
+         "Admin", "Member"
+        );
+    });
+});
 
 //builder.Services.AddAuthorization(options =>
 //{
@@ -124,19 +134,22 @@ builder.Services.AddAuthentication(x => {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(options =>
-     options.TokenValidationParameters = new TokenValidationParameters
-     {
-         ValidateIssuer = true,
-         ValidateAudience = true,
-         ValidateLifetime = true,
-         ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
-         ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
-         ValidateIssuerSigningKey = true,
-         IssuerSigningKey = new SymmetricSecurityKey(
-         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"])),
-         ClockSkew = TimeSpan.Zero
-     });
+    .AddJwtBearer(options => {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
+            ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
+            ValidateIssuerSigningKey = false,
+            IssuerSigningKey = new SymmetricSecurityKey(
+           Encoding.ASCII.GetBytes(builder.Configuration["Jwt:key"])),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 #endregion
 
