@@ -35,18 +35,23 @@ namespace ApiCadastroAlunos.Controllers
         public async Task<IActionResult> GetAll()
         {
             //_logger.LogTrace($"Iniciando busca de informações de alunos");
-
-            var alunoExists = await _aluno.Get();
+            try
+            {
+                var alunoExists = await _aluno.Get();
 
                 if (alunoExists.Success)
                 {
                     return Ok(alunoExists.Data);
                 }
 
-                if (alunoExists.Message == "Problemas ao capturar aluno.")
-                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+                return Response();
+            }
+            catch (Exception ex)
+            {
 
-                return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+                return StatusCode(500 , ex.Message);
+            }
+
         }
 
 
@@ -63,17 +68,24 @@ namespace ApiCadastroAlunos.Controllers
         [HttpGet("/api/alunos/search/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var alunoExists = await _aluno.GetById(id);
-
-            if (alunoExists.Success)
+            try
             {
-                return Created("Alunos encontrado com Sucesso !!", alunoExists.Data);
+                var alunoExists = await _aluno.GetById(id);
+
+                if (alunoExists.Success)
+                {
+                    return Created("Aluno encontrado com Sucesso !!", alunoExists.Data);
+                }
+
+                return Response();
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
             }
 
-            if (alunoExists.Message == "Problemas ao capturar aluno.")
-            return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
-
-            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+        
         }
 
 
@@ -92,17 +104,23 @@ namespace ApiCadastroAlunos.Controllers
         [Route("/api/alunos/create")]
         public async Task<IActionResult> New([FromBody] AlunoViewModel aluno)
         {
-
-            var alunoCreated = await _aluno.create(aluno);
-            if (alunoCreated.Success)
+            try
             {
-                return Ok(alunoCreated);
+                var alunoCreated = await _aluno.create(aluno);
+                if (alunoCreated.Success)
+                {
+                    return Ok(alunoCreated);
+                }
+
+                return Response();
             }
+            catch (Exception ex)
+            {
 
-            if (alunoCreated.Message == "Problemas ao criar aluno." || alunoCreated.Message == "Erros encontrados!")
-            return StatusCode(StatusCodes.Status500InternalServerError, alunoCreated);
+                return StatusCode(500, ex.Message);
+            }
+         
 
-            return StatusCode(StatusCodes.Status404NotFound, alunoCreated);
 
         }
 
@@ -124,12 +142,12 @@ namespace ApiCadastroAlunos.Controllers
             var alunoExists = await _aluno.Update(aluno);
 
                 if (alunoExists.Success)
-                    return Ok(alunoExists);
+                return Ok(alunoExists);
 
                 if (alunoExists.Message == "Problemas ao atualizar aluno." || alunoExists.Message == "Erros encontrados!")
-                return StatusCode(StatusCodes.Status500InternalServerError, alunoExists);
+                return Response(alunoExists);
 
-                return StatusCode(StatusCodes.Status404NotFound, alunoExists);
+            return StatusCode(StatusCodes.Status404NotFound, alunoExists);
 
         }
 
@@ -146,16 +164,22 @@ namespace ApiCadastroAlunos.Controllers
         [HttpDelete("api/delete/aluno/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var userExists = await _aluno.Delete(id);
-          
-            if (userExists.Success)
-            return Ok(userExists.Data);
+            try
+            {
+                var userExists = await _aluno.Delete(id);
 
-            if (userExists.Message == "Problemas ao deletar aluno.")
-            return Response(StatusCode(StatusCodes.Status500InternalServerError, userExists));
+                if (userExists.Success)
+                return Ok(userExists.Data);
+
+                return Response();
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
 
 
-            return StatusCode(404, userExists);
 
         }
     }

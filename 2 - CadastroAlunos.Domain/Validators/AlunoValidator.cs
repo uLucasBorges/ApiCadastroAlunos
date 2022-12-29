@@ -36,10 +36,10 @@ namespace ApiCadastroAlunos.Models.Validators
                 .WithMessage("O sobrenome não pode ser vazio.")
 
                 .MinimumLength(3)
-                .WithMessage("O nome deve ter no mínimo 3 caracteres.")
+                .WithMessage("O sobrenome deve ter no mínimo 3 caracteres.")
 
                 .MaximumLength(50)
-                .WithMessage("O nome deve ter no máximo 50 caracteres.");
+                .WithMessage("O sobrenome deve ter no máximo 50 caracteres.");
 
             RuleFor(x => x.email)
                 .NotNull()

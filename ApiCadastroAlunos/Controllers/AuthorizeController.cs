@@ -107,12 +107,15 @@ namespace ApiCadastroAlunos.Controllers
 
             
             var roles = await _service.GetRoles(user);
-
-            foreach(var role in roles)
+           
+            if (roles != null)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
 
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+            }
 
             //gera uma chave com base em um algoritmo simetrico
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

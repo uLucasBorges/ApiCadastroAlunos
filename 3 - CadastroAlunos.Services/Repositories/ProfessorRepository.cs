@@ -85,9 +85,7 @@ namespace ApiCadastroAlunos.Repositories
                                      (SELECT COUNT(1) FROM alunos a  WHERE a.professorid = p.id) alunos
                                      FROM
                                      professor p, alunos a
-                                     WHERE p.id = @id
-                                     GROUP BY
-                                     p.Id, p.Nome, p.Sobrenome , p.Cep , p.Logradouro , p.Cidade, p.Celular , p.Cpf , p.Materia";
+                                     WHERE p.id = @id";
 
                     ProfessorViewModel professor = (await conn.QueryAsync<ProfessorViewModel>(sql: query , new {Id = id})).FirstOrDefault();
                     
@@ -115,9 +113,7 @@ namespace ApiCadastroAlunos.Repositories
                     string query = @"SELECT a.Id , a.Nome, a.Sobrenome , a.professorid as ProfessorId, a.email , a.Celular
                                      FROM
                                      professor p, alunos a
-                                     WHERE p.id = a.professorid and p.id = @Id
-                                     GROUP BY
-                                     a.Id , a.Nome , a.Sobrenome , a.professorid , a.Email , a.Celular , a.professorid";
+                                     WHERE p.id = a.professorid and p.id = @Id";
                     List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query, new { Id = id })).ToList();
 
                     return Responses<AlunoViewModel>.List(alunos);

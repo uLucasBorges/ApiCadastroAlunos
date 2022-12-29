@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using _2___CadastroAlunos.Domain.Notification;
 using ApiCadastroAlunos.Controllers;
 using ApiCadastroAlunos.Core.Interfaces;
 using ApiCadastroAlunos.Models;
@@ -15,17 +16,19 @@ namespace Api.Testes
     {
         private readonly MockRepository mockRepository;
         private readonly Mock<IAlunoRepository> mockAlunoRepository;
+        private readonly Mock<INotificationContext> mockNotificationContext;
 
 
         public AlunoControllerTests()
         {
             this.mockRepository = new MockRepository(MockBehavior.Loose);
             this.mockAlunoRepository = this.mockRepository.Create<IAlunoRepository>();
+            this.mockNotificationContext = this.mockRepository.Create<INotificationContext>();
         }
 
         private AlunoController CriarAlunoController()
         {
-            return new AlunoController(mockAlunoRepository.Object);
+            return new AlunoController(mockAlunoRepository.Object, mockNotificationContext.Object);
         }
 
 
@@ -66,26 +69,6 @@ namespace Api.Testes
             this.mockRepository.VerifyAll();
         }
 
-
-
-        [Fact(DisplayName = "Deve retornar 200 na busca de aluno por id")]
-        public async Task Deve_Retornar_200_Na_Busca_AlunoNome()
-        {
-            // Arrange
-            var nome = "";  
-            var sobrenome = "";
-            var alunooController = this.CriarAlunoController();
-            mockAlunoRepository.Setup(x => x.GetBy(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new ResultViewModel() { Success = true });
-
-            // Act
-            var result = (ObjectResult)await alunooController.GetByName(nome , sobrenome);
-
-            // Assert
-            mockAlunoRepository.Verify(x => x.GetBy(nome , sobrenome), Times.Once);
-
-            Assert.Equal(200, result.StatusCode);
-            this.mockRepository.VerifyAll();
-        }
 
 
         [Fact(DisplayName = "Deve retornar 200 na criação de alunos")]

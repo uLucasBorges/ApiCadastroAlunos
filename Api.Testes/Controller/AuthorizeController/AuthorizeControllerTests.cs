@@ -59,7 +59,7 @@ namespace Api.Testes
         public async Task Deve_Retornar_200_No_Login_Usuario()
         {
             // Arrange
-            var user = new UserDTO("Teste", "hugo.teste@clear.sale", "154874Uu@", "154874Uu@");
+            var user = new UserDTO("lucas.carvalho", "lucas.carvalho@clear.sale", "197217Rr@", "197217Rr@");
 
 
             var authorizeController = this.CriarAuthorizeController();

@@ -51,6 +51,8 @@ namespace ApiCadastroAlunos.Repositories
                     return Responses<Aluno>.Create(Aluno);
                 }
 
+                _notification.AddNotification(400, Aluno.Erros);
+
                 return new ResultViewModel()
                 {
                     Data = Aluno.Erros,
@@ -76,6 +78,7 @@ namespace ApiCadastroAlunos.Repositories
             {
                 var userExists = await this.GetById(id);
                 var alunoTransfer = _mapper.Map<Aluno>(userExists.Data);
+
                 if (alunoTransfer != null)
                 {
                     _db.Alunos.Remove(alunoTransfer);
@@ -83,9 +86,10 @@ namespace ApiCadastroAlunos.Repositories
                    return Responses<Aluno>.Delete(alunoTransfer);
                 }
 
-                _notification.AddNotification(500, "Aluno não existente");
-                return new ResultViewModel();
-
+                return new ResultViewModel()
+                {
+                    Success = false
+                };
 
             }
             catch (Exception ex)
@@ -109,13 +113,19 @@ namespace ApiCadastroAlunos.Repositories
                                      FROM
                                      professor p
                                      INNER JOIN Alunos a
-                                     ON a.professorid = p.Id
-                                     GROUP BY
-                                     a.Id , a.Nome  , a.Sobrenome,  p.Id , a.Email , a.Celular";
+                                     ON a.professorid = p.Id";
 
                    List<AlunoViewModel> alunos = (await conn.QueryAsync<AlunoViewModel>(sql: query)).ToList();
 
-                   return Responses<AlunoViewModel>.List(alunos);
+                    if(alunos.Count == 0)
+                    _notification.AddNotification(404, "alunos não encontrados");
+
+                    return new ResultViewModel()
+                    {
+                        Success = false
+                    };
+
+                    return Responses<AlunoViewModel>.List(alunos);
 
                 }
 
@@ -147,10 +157,11 @@ namespace ApiCadastroAlunos.Repositories
                                      FROM
                                      professor p
                                      INNER JOIN Alunos a
-                                     ON a.professorid = p.Id and a.id = @Id
-                                     GROUP BY
-                                     a.Id , a.Nome,a.Sobrenome ,a.Email , a.Celular, p.Id , p.Nome";
+                                     ON a.professorid = p.Id and a.id = @Id";
                     var aluno = (await conn.QueryFirstOrDefaultAsync<AlunoViewModel>(sql: query, new { Id = id }));
+
+                    if (aluno is null)
+                    _notification.AddNotification(404, "aluno não encontrado");
 
                     return Responses<AlunoViewModel>.Select(aluno);
                 }
@@ -161,7 +172,7 @@ namespace ApiCadastroAlunos.Repositories
 
                 return new ResultViewModel
                 {
-                    Message = "Problemas ao capturar aluno.",
+                    Message = "Problemas ao capturar aluno. (Database)",
                     Success = false
                 };
             }
@@ -179,21 +190,24 @@ namespace ApiCadastroAlunos.Repositories
 
                     var userExists = await this.GetById(aluno.Id);
 
-                    if (userExists.Data != null)
+                    if (userExists.Data is null)
                     {
-                        _db.Entry(alunoTransfer).State = EntityState.Modified;
-                        await _db.SaveChangesAsync();
+                        _notification.AddNotification(404, "aluno não encontrado");
+
                     }
+
+                    _db.Entry(alunoTransfer).State = EntityState.Modified;
+                    await _db.SaveChangesAsync();
 
                     return Responses<Aluno>.Update(alunoTransfer);
 
                 }
+
                 return new ResultViewModel()
                 {
                     Data = alunoTransfer.Erros,
-                    Message = "Erros encontrados",
+                    Message = "Erros encontrados!",
                     Success = false
-
                 };
 
             }
