@@ -43,8 +43,9 @@ namespace ApiCadastroAlunos.Repositories
                 {
                     if (Aluno != null)
 
+                    
                     await _db.Alunos.AddAsync(Aluno);
-                    await _db.SaveChangesAsync();
+                    _db.SaveChanges();
 
                     return Responses<Aluno>.Create(Aluno);
                 }

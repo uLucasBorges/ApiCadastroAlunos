@@ -30,6 +30,7 @@ namespace CadastroAlunos.Infra.Data
 
 
         public void Dispose() => Connection?.Dispose();
+        
 
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
