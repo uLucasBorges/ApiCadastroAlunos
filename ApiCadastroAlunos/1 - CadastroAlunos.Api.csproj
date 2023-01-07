@@ -7,7 +7,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DocumentationFile>C:\Users\lucas.carvalho\source\repos\ApiCadastroAlunos\ApiCadastroAlunos\1 - CadastroAlunos.Api.xml</DocumentationFile>
+		<!--<DocumentationFile>C:\Users\lucas.carvalho\source\repos\ApiCadastroAlunos\ApiCadastroAlunos\1 - CadastroAlunos.Api.xml</DocumentationFile>-->
+		<DocumentationFile>..\1 - CadastroAlunos.Api.xml</DocumentationFile>
 	</PropertyGroup>
 
 
