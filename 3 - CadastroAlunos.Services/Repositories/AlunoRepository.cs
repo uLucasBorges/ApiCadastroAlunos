@@ -21,15 +21,13 @@ namespace ApiCadastroAlunos.Repositories
         //metodos de inserir com o EF , metodos de get com o dapper;
         private readonly INotificationContext _notification;
         private readonly AppDbContext _db;
-        private readonly AppDb bdb;
         private readonly IMapper _mapper;
         private readonly ILogger<AlunoRepository> _logger;
 
 
-        public AlunoRepository(AppDbContext db, AppDb bd , IMapper mapper, ILogger<AlunoRepository> logger, INotificationContext notification)
+        public AlunoRepository(AppDbContext db , IMapper mapper, ILogger<AlunoRepository> logger, INotificationContext notification)
         {
             _db = db;
-            bdb = bd;
             _mapper = mapper;
             _logger = logger;
             _notification = notification;
@@ -107,7 +105,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                using (var conn = bdb.Connection)
+                using (var conn = _db.Connection)
                 {
                     string query = @"SELECT a.Id, a.Nome  , a.Sobrenome,  p.Id as professorId , a.Email , a.Celular
                                      FROM
@@ -150,7 +148,7 @@ namespace ApiCadastroAlunos.Repositories
 
             try
             {
-                using (var conn = bdb.Connection)
+                using (var conn = _db.Connection)
                 {
 
                     string query = @"SELECT a.id , a.Nome  , a.Sobrenome, a.Email as email , a.Celular as celular , p.Id as ProfessorId , p.Nome as professorNome

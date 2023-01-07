@@ -81,7 +81,7 @@ namespace ApiCadastroAlunos.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Login Inválido....");
+                ModelState.AddModelError(string.Empty, "Login Inválido!");
                 return BadRequest(ModelState);
             }
         }

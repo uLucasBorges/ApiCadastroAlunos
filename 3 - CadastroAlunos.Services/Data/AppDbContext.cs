@@ -9,14 +9,28 @@ using Microsoft.Extensions.Configuration;
 
 namespace CadastroAlunos.Infra.Data
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser>
+    public class AppDbContext : IdentityDbContext<IdentityUser> , IDisposable
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public IDbConnection Connection { get; set; }
+
+
+        public AppDbContext(DbContextOptions<AppDbContext> options , IConfiguration? configuration) : base(options)
         {
+            if(configuration != null)
+            {
+                Connection = new SqlConnection(configuration.GetConnectionString("Default"));
+                Connection.Open();
+            }
         }
+
+
 
         public DbSet<Aluno> Alunos { get; set; }
         public DbSet<Professor> Professor { get; set; }
+
+
+        public void Dispose() => Connection?.Dispose();
+
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
@@ -39,20 +53,5 @@ namespace CadastroAlunos.Infra.Data
 
     }
 }
-
-public class AppDb : IDisposable
-{
-    public IDbConnection Connection { get; set; }
-
-    public AppDb(IConfiguration configuration)
-    {
-        Connection = new SqlConnection(configuration.GetConnectionString("Default"));
-        Connection.Open();
-    }
-
-    public void Dispose() => Connection?.Dispose();
-
-}
-
 
 

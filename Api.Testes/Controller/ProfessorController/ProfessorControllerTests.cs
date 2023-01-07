@@ -89,17 +89,17 @@ namespace Api.Testes
         public async Task Deve_Retornar_200_Na_Criacao_Professor()
         {
             // Arrange
-            var professor = new Professor()
-            {
-                Nome = "Zezinho",
-                Sobrenome = "Da Silva Pinto",
-                Celular = "11966547455",
-                Cep = "062350451",
-                Cidade = "São Paulo",
-                Cpf = "15965235214",
-                logradouro = "Rua Mogno Africano",
-                Materia = "Matematica"
-            };
+
+            var professor = new Professor(0,
+                "Zezinho",
+                "Da Silva Pinto",
+                "062350451",
+                "Rua Mogno Africano",
+                "São Paulo",
+                "11966547455",
+                "15965235214",
+                "Matematica");
+           
             var professorController = this.CriarProfessorController();
             mockProfessorRepository.Setup(x => x.Create(professor)).ReturnsAsync(new ResultViewModel("",true,professor));
 

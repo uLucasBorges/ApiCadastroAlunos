@@ -10,10 +10,10 @@ namespace ApiCadastroAlunos.Models.Validators
         {
             RuleFor(x => x)
                .NotEmpty()
-               .WithMessage("o Aluno não pode ser vazia.")
+               .WithMessage("o Aluno não pode ser vazio.")
 
                .NotNull()
-               .WithMessage("o Aluno não pode ser nula.");
+               .WithMessage("o Aluno não pode ser nulo.");
 
             RuleFor(x => x.Nome)
                 .NotNull()

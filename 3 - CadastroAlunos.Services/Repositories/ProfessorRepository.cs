@@ -14,12 +14,10 @@ namespace ApiCadastroAlunos.Repositories
     public class ProfessorRepository : IProfessorRepository
     {
         private readonly ILogger<ProfessorRepository> _logger;
-        private readonly AppDb bdb;
         private readonly AppDbContext _db;
 
-        public ProfessorRepository(AppDb bdb, AppDbContext db, ILogger<ProfessorRepository> logger)
+        public ProfessorRepository(AppDbContext db, ILogger<ProfessorRepository> logger)
         {
-            this.bdb = bdb;
             _db = db;
             _logger = logger;
         }
@@ -49,7 +47,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                using (var conn = bdb.Connection)
+                using (var conn = _db.Connection)
                 {
                     string query = @"SELECT p.Id AS Id, p.Nome AS nome , p.Sobrenome , p.Cep , p.Logradouro , p.Cidade, p.Celular , p.Cpf , p.Materia AS Materia,
                                      (SELECT COUNT(1) FROM alunos a  WHERE a.professorid = p.id) alunos
@@ -78,7 +76,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                using (var conn = bdb.Connection)
+                using (var conn = _db.Connection)
                 {
 
                     string query = @"SELECT p.Id AS Id, p.Nome AS nome , p.Sobrenome , p.Cep , p.Logradouro , p.Cidade, p.Celular , p.Cpf , p.materia AS Materia ,
@@ -108,7 +106,7 @@ namespace ApiCadastroAlunos.Repositories
         {
             try
             {
-                using (var conn = bdb.Connection)
+                using (var conn = _db.Connection)
                 {
                     string query = @"SELECT a.Id , a.Nome, a.Sobrenome , a.professorid as ProfessorId, a.email , a.Celular
                                      FROM

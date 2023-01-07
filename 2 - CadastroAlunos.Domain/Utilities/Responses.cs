@@ -1,5 +1,6 @@
 ﻿using ApiCadastroAlunos.Core.Models;
 using ApiCadastroAlunos.ViewModel;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ApiCadastroAlunos.Utilities
 {
@@ -15,33 +16,30 @@ namespace ApiCadastroAlunos.Utilities
             };
         }
 
-        public static ResultViewModel Create(T T)
+        public static ResultViewModel Create(T model)
         {
-
-            var sucess = new ResultViewModel
+            var result = new ResultViewModel { Success = false };
+            if (model != null)
             {
-                Message = "Aluno criado com sucesso!",
-                Success = true,
-                Data = T
-            };
-
-            var failed = new ResultViewModel
-            {
-                Message = "Aluno já existente!",
-                Success = false
-            };
-
-
-            var p = new Professor();
-            if (T.GetType() == p.GetType())
-            {
-                sucess.Message = "Professor criado com sucesso!";
-                failed.Message = "Professor já existente!";
-
+                result.Success = true;
+                result.Data = model;
             }
 
-            return T != null ? sucess : failed;
+            if (result.Success && model.GetType() == typeof(Professor))
+            {
 
+                result.Message = "Professor criado com sucesso!";
+            }
+            else if (result.Success && model.GetType() == typeof(Aluno))
+            {
+                result.Message = "Aluno criado com sucesso!";
+            }
+            else
+            {
+                result.Message = "Pessoa já existente!";
+            }
+
+            return result;
         }
 
         public static ResultViewModel Update(T T)
